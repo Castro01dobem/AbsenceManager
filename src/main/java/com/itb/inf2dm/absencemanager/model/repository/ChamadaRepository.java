@@ -1,4 +1,4 @@
-package com.itb.inf2dm.absencemanager.repository;
+package com.itb.inf2dm.absencemanager.model.repository;
 
 import com.itb.inf2dm.absencemanager.model.entity.Chamada;
 import org.springframework.data.jpa.repository.JpaRepository;
