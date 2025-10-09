@@ -29,28 +29,30 @@ public class AlunoService {
     }
 
     // Listar Produto por Id
-    public Produto findById(Long id) {
-        return produtoRepository.findById()
+    public Aluno findById(Long id) {
+        return alunoRepository.findById()
                 .orElseThrow(()-> new RuntimeException("Produto não encontrado com o id:" + id));
     }
 
     // Atualizar Produto
-    public Produto update(Long id, Produto produto) {
-        Produto produtoExistente = findById(id);
-        produtoExistente.setNome(produto.getNome());
-        produtoExistente.setDescricao(produto.getDescricao());
-        produtoExistente.setTipo(produto.getTipo());
-        produtoExistente.setValorVenda(produto.getValorVenda());
-        produtoExistente.setValorCompra(produto.getValorCompra());
-        produtoExistente.setQuantidadeEstoque(produto.getQuantidadeEstoque());
-        return produtoRepository.save(produtoExistente);
+    public Aluno update(Long id, Aluno aluno) {
+        Aluno alunoExistente = findById(id);
+        alunoExistente.setNome(aluno.getNome());
+        alunoExistente.setId(aluno.getId());
+        alunoExistente.setRm(aluno.getRm());
+        alunoExistente.setDataNascimento(aluno.getDataNascimento());
+        alunoExistente.setSexo(aluno.getSexo());
+        alunoExistente.setStatusAluno(aluno.getStatusAluno());
+        alunoExistente.setUsuario_id(aluno.getUsuario_id());
+        alunoExistente.setTelefone(aluno.getTelefone());
+        return alunoRepository.save(alunoExistente);
     }
 
 
-    // Excluir Produto
+    // Excluir Aluno
     public void delete(Long id) {
-        Produto produtoExistente = findById(id);
-        produtoRepository.delete(produtoExistente);
+        Aluno alunoExistente = findById(id);
+        alunoRepository.delete(alunoExistente);
     }
 }
 
