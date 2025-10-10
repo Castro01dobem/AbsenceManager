@@ -1,6 +1,5 @@
 package com.itb.inf2dm.absencemanager.model.services;
 
-
 import com.itb.inf2dm.absencemanager.model.entity.Aluno;
 import com.itb.inf2dm.absencemanager.model.repository.AlunoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +28,16 @@ public class AlunoService {
     }
 
     // Listar Produto por Id
-    public Aluno findById(Long id) {
-        return alunoRepository.findById()
-                .orElseThrow(()-> new RuntimeException("Produto não encontrado com o id:" + id));
+
+    public Aluno findById(int id) {
+        return alunoRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Aluno não encontrado com o id:" + id));
     }
 
     // Atualizar Produto
-    public Aluno update(Long id, Aluno aluno) {
+
+    public Aluno update(int id, Aluno aluno) {
+
         Aluno alunoExistente = findById(id);
         alunoExistente.setNome(aluno.getNome());
         alunoExistente.setId(aluno.getId());
@@ -50,7 +52,7 @@ public class AlunoService {
 
 
     // Excluir Aluno
-    public void delete(Long id) {
+    public void delete(int id) {
         Aluno alunoExistente = findById(id);
         alunoRepository.delete(alunoExistente);
     }

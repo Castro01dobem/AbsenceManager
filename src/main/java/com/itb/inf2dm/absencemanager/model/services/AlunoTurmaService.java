@@ -28,13 +28,14 @@ public class AlunoTurmaService {
     }
 
     // Listar Produto por Id
-    public AlunoTurma findById(Long id) {
-        return alunoTurmaRepository.findById()
+    public AlunoTurma findById(int id) {
+        return alunoTurmaRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Turma do aluno não encontrado com o id:" + id));
     }
 
     // Atualizar Produto
-    public AlunoTurma update(Long id, AlunoTurma alunoTurma) {
+    public AlunoTurma update(int id, AlunoTurma alunoTurma) {
+
         AlunoTurma alunoTurmaExistente = findById(id);
         alunoTurmaExistente.setAluno_id(alunoTurma.getAluno_id());
         alunoTurmaExistente.setId(alunoTurma.getId());
@@ -46,7 +47,7 @@ public class AlunoTurmaService {
 
 
     // Excluir Aluno
-    public void delete(Long id) {
+    public void delete(int id) {
         AlunoTurma alunoTurmaExistente = findById(id);
         alunoTurmaRepository.delete(alunoTurmaExistente);
     }
