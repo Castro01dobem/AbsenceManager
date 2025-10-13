@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface AlunoTurmaRepository extends JpaRepository<AlunoTurma, Integer> {
-    Optional<Object> findById();
+
 }
