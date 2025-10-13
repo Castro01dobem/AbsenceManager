@@ -9,7 +9,7 @@ public class Chamada {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private int id;
+        private Integer id;
         @Column(length =  100, nullable = false)
         private int aula_id;
         @Column(length =  100, nullable = false)

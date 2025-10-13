@@ -42,7 +42,7 @@ public class ChamadaController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> listarChamadaPorId(@PathVariable String id) {
         try {
-            return ResponseEntity.ok(chamadaService.findById(Long.parseLong(id)));
+            return ResponseEntity.ok(chamadaService.findById(Integer.parseInt(id)));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -67,7 +67,7 @@ public class ChamadaController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizarChamada(@PathVariable String id, @RequestBody Chamada chamada) {
         try {
-            return ResponseEntity.ok(chamadaService.update(Long.parseLong(id), chamada));
+            return ResponseEntity.ok(chamadaService.update(Integer.parseInt(id), chamada));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -91,7 +91,7 @@ public class ChamadaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarChamadaPorId(@PathVariable String id) {
         try {
-            chamadaService.delete(Long.parseLong(id));
+            chamadaService.delete(Integer.parseInt(id));
             return ResponseEntity.ok().body(
                     Map.of(
                             "status", 200,

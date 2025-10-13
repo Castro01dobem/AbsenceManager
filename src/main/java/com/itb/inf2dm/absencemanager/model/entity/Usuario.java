@@ -9,7 +9,7 @@ public class Usuario {
     //VERIFICAR
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(length = 100, nullable = true)
     private String nome;
     @Column(length = 45, nullable = false)

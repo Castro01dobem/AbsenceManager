@@ -10,7 +10,7 @@ public class Aula {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(length =4, nullable = false)
     private Time horarioAula;
     @Column(length =8, nullable = false)

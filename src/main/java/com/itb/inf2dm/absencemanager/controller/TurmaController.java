@@ -42,7 +42,7 @@ public class TurmaController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> listarTurmaPorId(@PathVariable String id) {
         try {
-            return ResponseEntity.ok(turmaService.findById(Long.parseLong(id)));
+            return ResponseEntity.ok(turmaService.findById(Integer.parseInt(id)));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -67,7 +67,7 @@ public class TurmaController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizarTurma(@PathVariable String id, @RequestBody Turma turma) {
         try {
-            return ResponseEntity.ok(turmaService.update(Long.parseLong(id), turma));
+            return ResponseEntity.ok(turmaService.update(Integer.parseInt(id), turma));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -91,7 +91,7 @@ public class TurmaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarTurmaPorId(@PathVariable String id) {
         try {
-            turmaService.delete(Long.parseLong(id));
+            turmaService.delete(Integer.parseInt(id));
             return ResponseEntity.ok().body(
                     Map.of(
                             "status", 200,

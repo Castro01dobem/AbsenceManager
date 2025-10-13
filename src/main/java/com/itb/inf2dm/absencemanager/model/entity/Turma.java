@@ -7,7 +7,7 @@ public class Turma {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(length = 50, nullable = true)
     private String nomeTurma;
     @Column(length = 50, nullable = false)

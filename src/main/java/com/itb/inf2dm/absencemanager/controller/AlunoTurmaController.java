@@ -42,7 +42,7 @@ public class AlunoTurmaController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> listarAlunoTurmaPorId(@PathVariable String id) {
         try {
-            return ResponseEntity.ok(alunoTurmaService.findById(Long.parseLong(id)));
+            return ResponseEntity.ok(alunoTurmaService.findById(Integer.parseInt(id)));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -67,7 +67,7 @@ public class AlunoTurmaController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizarAlunoTurma(@PathVariable String id, @RequestBody AlunoTurma alunoTurma) {
         try {
-            return ResponseEntity.ok(alunoTurmaService.update(Long.parseLong(id), alunoTurma));
+            return ResponseEntity.ok(alunoTurmaService.update(Integer.parseInt(id), alunoTurma));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -91,7 +91,7 @@ public class AlunoTurmaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarAlunoTurmaPorId(@PathVariable String id) {
         try {
-            alunoTurmaService.delete(Long.parseLong(id));
+            alunoTurmaService.delete(Integer.parseInt(id));
             return ResponseEntity.ok().body(
                     Map.of(
                             "status", 200,
