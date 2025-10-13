@@ -1,7 +1,7 @@
 package com.itb.inf2dm.absencemanager.controller;
 
-import com.itb.inf2dm.absencemanager.model.entity.Aluno;
-import com.itb.inf2dm.absencemanager.model.services.AlunoService;
+import com.itb.inf2dm.absencemanager.model.entity.Turma;
+import com.itb.inf2dm.absencemanager.model.services.TurmaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,28 +21,28 @@ ResponseEntity : Toda resposta HTTP (status, cabeçalhos e corpo ), aqui teremos
 */
 
 @RestController
-@RequestMapping("/api/v1/aluno")
-public class AlunoController {
+@RequestMapping("/api/v1/turma")
+public class TurmaController {
 
     @Autowired
-    private AlunoService alunoService;
+    private TurmaService turmaService;
 
     @GetMapping
-    public ResponseEntity <List<Aluno>> listarTodosAlunos() {
+    public ResponseEntity <List<Turma>> listarTodosTurma() {
 
-        return ResponseEntity.ok(alunoService.findAll());
+        return ResponseEntity.ok(turmaService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<Aluno> salvarAluno(@RequestBody Aluno aluno) {
-        Aluno novoAluno = alunoService.save(aluno);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoAluno);
+    public ResponseEntity<Turma> salvarTurma(@RequestBody Turma turma) {
+        Turma novoTurma = turmaService.save(turma);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoTurma);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> listarAlunoPorId(@PathVariable String id) {
+    public ResponseEntity<Object> listarTurmaPorId(@PathVariable String id) {
         try {
-            return ResponseEntity.ok(alunoService.findById(Long.parseLong(id)));
+            return ResponseEntity.ok(turmaService.findById(Long.parseLong(id)));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -58,16 +58,16 @@ public class AlunoController {
                     Map.of(
                             "status", 404,
                             "error", "Not Found",
-                            "message", "Produto não encontrado com o id: " + id
+                            "message", "Turma não encontrada com o id: " + id
                     )
             );
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> atualizarAluno(@PathVariable String id, @RequestBody Aluno aluno) {
+    public ResponseEntity<Object> atualizarTurma(@PathVariable String id, @RequestBody Turma turma) {
         try {
-            return ResponseEntity.ok(alunoService.update(Long.parseLong(id), aluno));
+            return ResponseEntity.ok(turmaService.update(Long.parseLong(id), turma));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -83,19 +83,19 @@ public class AlunoController {
                     Map.of(
                             "status", 404,
                             "error", "Not Found",
-                            "message", "Aluno não encontrado com o id: " + id
+                            "message", "Turma não encontrado com o id: " + id
                     )
             );
         }
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarAlunoPorId(@PathVariable String id) {
+    public ResponseEntity<Object> deletarTurmaPorId(@PathVariable String id) {
         try {
-            alunoService.delete(Long.parseLong(id));
+            turmaService.delete(Long.parseLong(id));
             return ResponseEntity.ok().body(
                     Map.of(
                             "status", 200,
-                            "message", "Aluno excluído com sucesso!"
+                            "message", "Turma excluído com sucesso!"
                     ));
         }
         catch (NumberFormatException e) {
@@ -112,7 +112,7 @@ public class AlunoController {
                     Map.of(
                             "status", 404,
                             "error", "Not Found",
-                            "message", "Aluno não encontrado com o id: " + id
+                            "message", "Turma não encontrado com o id: " + id
                     )
             );
         }

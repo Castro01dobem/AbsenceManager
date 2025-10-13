@@ -1,7 +1,7 @@
 package com.itb.inf2dm.absencemanager.controller;
 
-import com.itb.inf2dm.absencemanager.model.entity.Aluno;
-import com.itb.inf2dm.absencemanager.model.services.AlunoService;
+import com.itb.inf2dm.absencemanager.model.entity.AlunoTurma;
+import com.itb.inf2dm.absencemanager.model.services.AlunoTurmaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,28 +21,28 @@ ResponseEntity : Toda resposta HTTP (status, cabeçalhos e corpo ), aqui teremos
 */
 
 @RestController
-@RequestMapping("/api/v1/aluno")
-public class AlunoController {
+@RequestMapping("/api/v1/AlunoTurma")
+public class AlunoTurmaController {
 
     @Autowired
-    private AlunoService alunoService;
+    private AlunoTurmaService alunoTurmaService;
 
     @GetMapping
-    public ResponseEntity <List<Aluno>> listarTodosAlunos() {
+    public ResponseEntity <List<AlunoTurma>> listarTodosAlunoTurma() {
 
-        return ResponseEntity.ok(alunoService.findAll());
+        return ResponseEntity.ok(alunoTurmaService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<Aluno> salvarAluno(@RequestBody Aluno aluno) {
-        Aluno novoAluno = alunoService.save(aluno);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoAluno);
+    public ResponseEntity<AlunoTurma> salvarAlunoTurma(@RequestBody AlunoTurma alunoTurma) {
+        AlunoTurma novoAlunoTurma = alunoTurmaService.save(alunoTurma);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoAlunoTurma);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> listarAlunoPorId(@PathVariable String id) {
+    public ResponseEntity<Object> listarAlunoTurmaPorId(@PathVariable String id) {
         try {
-            return ResponseEntity.ok(alunoService.findById(Long.parseLong(id)));
+            return ResponseEntity.ok(alunoTurmaService.findById(Long.parseLong(id)));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -58,16 +58,16 @@ public class AlunoController {
                     Map.of(
                             "status", 404,
                             "error", "Not Found",
-                            "message", "Produto não encontrado com o id: " + id
+                            "message", "AlunoTurma não encontrado com o id: " + id
                     )
             );
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> atualizarAluno(@PathVariable String id, @RequestBody Aluno aluno) {
+    public ResponseEntity<Object> atualizarAlunoTurma(@PathVariable String id, @RequestBody AlunoTurma alunoTurma) {
         try {
-            return ResponseEntity.ok(alunoService.update(Long.parseLong(id), aluno));
+            return ResponseEntity.ok(alunoTurmaService.update(Long.parseLong(id), alunoTurma));
         }
         catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(
@@ -83,19 +83,19 @@ public class AlunoController {
                     Map.of(
                             "status", 404,
                             "error", "Not Found",
-                            "message", "Aluno não encontrado com o id: " + id
+                            "message", "AlunoTurma não encontrado com o id: " + id
                     )
             );
         }
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarAlunoPorId(@PathVariable String id) {
+    public ResponseEntity<Object> deletarAlunoTurmaPorId(@PathVariable String id) {
         try {
-            alunoService.delete(Long.parseLong(id));
+            alunoTurmaService.delete(Long.parseLong(id));
             return ResponseEntity.ok().body(
                     Map.of(
                             "status", 200,
-                            "message", "Aluno excluído com sucesso!"
+                            "message", "AlunoTurma excluído com sucesso!"
                     ));
         }
         catch (NumberFormatException e) {
@@ -112,7 +112,7 @@ public class AlunoController {
                     Map.of(
                             "status", 404,
                             "error", "Not Found",
-                            "message", "Aluno não encontrado com o id: " + id
+                            "message", "AlunoTurma não encontrado com o id: " + id
                     )
             );
         }
