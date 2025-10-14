@@ -22,7 +22,7 @@ public class Aluno {
     @Column(length = 8, nullable = false)
     private Date dataNascimento;
     @Column(length = 100, nullable = false)
-    private int usuario_id;
+    private int usuarioId;
     @Column(length = 25, nullable = false)
     private String statusAluno;
 
