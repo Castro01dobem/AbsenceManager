@@ -43,8 +43,6 @@ public class ChamadaService {
         Chamada chamadaExistente = findById(id);
         chamadaExistente.setStatusChamada(chamada.getStatusChamada());
         chamadaExistente.setId(chamada.getId());
-        chamadaExistente.setAlunoId(chamada.getAlunoId());
-        chamadaExistente.setAulaId(chamada.getAulaId());
         chamadaExistente.setDataCadastro(chamada.getDataCadastro());
         chamadaExistente.setOcorrencia(chamada.getOcorrencia());
         return chamadaRepository.save(chamadaExistente);

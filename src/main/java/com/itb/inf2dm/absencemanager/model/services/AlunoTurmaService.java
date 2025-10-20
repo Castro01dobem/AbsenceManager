@@ -37,9 +37,7 @@ public class AlunoTurmaService {
     public AlunoTurma update(int id, AlunoTurma alunoTurma) {
 
         AlunoTurma alunoTurmaExistente = findById(id);
-        alunoTurmaExistente.setAlunoId(alunoTurma.getAlunoId());
         alunoTurmaExistente.setId(alunoTurma.getId());
-        alunoTurmaExistente.setTurmaId(alunoTurma.getTurmaId());
         alunoTurmaExistente.setStatusAlunoTurma(alunoTurma.getStatusAlunoTurma());
         alunoTurmaExistente.setDataCadastro(alunoTurma.getDataCadastro());
         return alunoTurmaRepository.save(alunoTurmaExistente);

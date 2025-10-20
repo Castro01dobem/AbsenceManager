@@ -21,10 +21,14 @@ public class Aluno {
     private String telefone;
     @Column(length = 8, nullable = false)
     private Date dataNascimento;
-    @Column(length = 100, nullable = false)
-    private int usuarioId;
+
     @Column(length = 25, nullable = false)
     private String statusAluno;
+
+
+   @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+   @JoinColumn(name = "usuario_id")
+   private  Usuario usuario;
 
 
 
@@ -88,15 +92,18 @@ public class Aluno {
 
     //-----------------------
 
-    public int getUsuarioId() {
-        return usuarioId;
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setUsuarioId(int usuarioId) {
-        this.usuarioId = usuarioId;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    //-----------------------
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
     public String getStatusAluno() {
         return statusAluno;

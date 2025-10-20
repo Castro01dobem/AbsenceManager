@@ -38,11 +38,8 @@ public class AulaService {
         Aula aulaExistente = findById(id);
         aulaExistente.setConteudo(aula.getConteudo());
         aulaExistente.setId(aula.getId());
-        aulaExistente.setTurmaId(aula.getTurmaId());
         aulaExistente.setDataAula(aula.getDataAula());
         aulaExistente.setHorarioAula(aula.getHorarioAula());
-        aulaExistente.setUsuarioId(aula.getUsuarioId());
-        aulaExistente.setDisciplinaId(aula.getDisciplinaId());
         aulaExistente.setQrCode(aula.getQrCode());
         return aulaRepository.save(aulaExistente);
     }

@@ -39,13 +39,13 @@ public class AlunoService {
     public Aluno update(int id, Aluno aluno) {
 
         Aluno alunoExistente = findById(id);
+        System.out.println("ID ALUNO" + alunoExistente.getId());
         alunoExistente.setNome(aluno.getNome());
         alunoExistente.setId(aluno.getId());
         alunoExistente.setRm(aluno.getRm());
         alunoExistente.setDataNascimento(aluno.getDataNascimento());
         alunoExistente.setSexo(aluno.getSexo());
         alunoExistente.setStatusAluno(aluno.getStatusAluno());
-        alunoExistente.setUsuarioId(aluno.getUsuarioId());
         alunoExistente.setTelefone(aluno.getTelefone());
         return alunoRepository.save(alunoExistente);
     }
