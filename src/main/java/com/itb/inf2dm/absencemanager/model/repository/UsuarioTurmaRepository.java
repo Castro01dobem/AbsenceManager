@@ -1,12 +1,10 @@
 package com.itb.inf2dm.absencemanager.model.repository;
 
-import com.itb.inf2dm.absencemanager.model.entity.AlunoTurma;
+import com.itb.inf2dm.absencemanager.model.entity.UsuarioTurma;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface AlunoTurmaRepository extends JpaRepository<AlunoTurma, Integer> {
+public interface UsuarioTurmaRepository extends JpaRepository<UsuarioTurma, Integer> {
 
 }

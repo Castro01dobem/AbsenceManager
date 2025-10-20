@@ -1,6 +1,5 @@
 package com.itb.inf2dm.absencemanager.model.services;
 
-import com.itb.inf2dm.absencemanager.model.entity.Usuario;
 import com.itb.inf2dm.absencemanager.model.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

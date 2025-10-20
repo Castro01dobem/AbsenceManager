@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class AlunoTurma {
+public class UsuarioTurma {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +15,7 @@ public class AlunoTurma {
     @Column(length =8, nullable = false)
     private LocalDateTime dataCadastro;
     @Column(length = 25, nullable = false)
-    private String statusAlunoTurma;
+    private String statusUsuarioTurma;
 
 
 
@@ -47,12 +47,12 @@ public class AlunoTurma {
 
     //-----------------------
 
-    public String getStatusAlunoTurma() {
-        return statusAlunoTurma;
+    public String getStatusUsuarioTurma() {
+        return statusUsuarioTurma;
     }
 
-    public void setStatusAlunoTurma(String statusAlunoTurma) {
-        this.statusAlunoTurma = statusAlunoTurma;
+    public void setStatusUsuarioTurma(String statusUsuarioTurma) {
+        this.statusUsuarioTurma = statusUsuarioTurma;
     }
 
 }
