@@ -11,9 +11,9 @@ public class Chamada {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Integer id;
         @Column(length =  100, nullable = false)
-        private int aula_id;
+        private int aulaId;
         @Column(length =  100, nullable = false)
-        private int aluno_id;
+        private int alunoId;
         @Column(length =  8, nullable = false)
         private LocalDateTime dataCadastro;
         @Column(length =  50, nullable = false)
@@ -33,22 +33,22 @@ public class Chamada {
 
     //-----------------------
 
-    public int getAula_id() {
-        return aula_id;
+    public int getAulaId() {
+        return aulaId;
     }
 
-    public void setAula_id(int aula_id) {
-        this.aula_id = aula_id;
+    public void setAulaId(int aulaId) {
+        this.aulaId = aulaId;
     }
 
     //-----------------------
 
-    public int getAluno_id() {
-        return aluno_id;
+    public int getAlunoId() {
+        return alunoId;
     }
 
-    public void setAluno_id(int aluno_id) {
-        this.aluno_id = aluno_id;
+    public void setAlunoId(int alunoId) {
+        this.alunoId = alunoId;
     }
 
     //-----------------------

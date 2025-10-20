@@ -16,11 +16,11 @@ public class Aula {
     @Column(length =8, nullable = false)
     private LocalDateTime dataAula;
     @Column(length = 100, nullable = false)
-    private int usuario_id;
+    private int usuarioId;
     @Column(length = 100, nullable = false)
-    private int disciplina_id;
+    private int disciplinaId;
     @Column(length = 100, nullable = false)
-    private int turma_id;
+    private int turmaId;
     @Column(length = 100, nullable = false)
     private String conteudo;
     private byte[] qrCode;
@@ -57,32 +57,32 @@ public class Aula {
 
     //-----------------------
 
-    public int getUsuario_id() {
-        return usuario_id;
+    public int getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setUsuario_id(int usuario_id) {
-        this.usuario_id = usuario_id;
-    }
-
-    //-----------------------
-
-    public int getDisciplina_id() {
-        return disciplina_id;
-    }
-
-    public void setDisciplina_id(int disciplina_id) {
-        this.disciplina_id = disciplina_id;
+    public void setUsuarioId(int usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     //-----------------------
 
-    public int getTurma_id() {
-        return turma_id;
+    public int getDisciplinaId() {
+        return disciplinaId;
     }
 
-    public void setTurma_id(int turma_id) {
-        this.turma_id = turma_id;
+    public void setDisciplinaId(int disciplinaId) {
+        this.disciplinaId = disciplinaId;
+    }
+
+    //-----------------------
+
+    public int getTurmaId() {
+        return turmaId;
+    }
+
+    public void setTurmaId(int turmaId) {
+        this.turmaId = turmaId;
     }
 
     //-----------------------

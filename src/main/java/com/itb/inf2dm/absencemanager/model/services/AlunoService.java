@@ -45,7 +45,7 @@ public class AlunoService {
         alunoExistente.setDataNascimento(aluno.getDataNascimento());
         alunoExistente.setSexo(aluno.getSexo());
         alunoExistente.setStatusAluno(aluno.getStatusAluno());
-        alunoExistente.setUsuario_id(aluno.getUsuario_id());
+        alunoExistente.setUsuarioId(aluno.getUsuarioId());
         alunoExistente.setTelefone(aluno.getTelefone());
         return alunoRepository.save(alunoExistente);
     }
