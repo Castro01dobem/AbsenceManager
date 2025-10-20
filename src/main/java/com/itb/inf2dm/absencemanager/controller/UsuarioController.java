@@ -27,7 +27,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping
+    @GetMapping("/listar")
     public ResponseEntity <List<Usuario>> listarTodosUsuarios() {
 
         return ResponseEntity.ok(usuarioService.findAll());
@@ -39,7 +39,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("buscar/{id}")
     public ResponseEntity<Object> listarUsuarioPorId(@PathVariable String id) {
         try {
             return ResponseEntity.ok(usuarioService.findById(Integer.parseInt(id)));
