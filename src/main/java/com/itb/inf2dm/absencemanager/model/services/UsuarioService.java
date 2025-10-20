@@ -1,5 +1,6 @@
 package com.itb.inf2dm.absencemanager.model.services;
 
+import com.itb.inf2dm.absencemanager.model.entity.Usuario;
 import com.itb.inf2dm.absencemanager.model.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class UsuarioService {
     // Salvar Usuario
 
     public Usuario save(Usuario usuario) {
-        usuario.setNome("");
+        usuario.setStatusUsuario("Ativo");
         return usuarioRepository.save(usuario);
     }
 
@@ -37,11 +38,10 @@ public class UsuarioService {
 
     // Atualizar Usuario
 
-    public Usuario update(int id, Usuario usuario) {
+    public Usuario update(Integer id, Usuario usuario) {
 
         Usuario usuarioExistente = findById(id);
         usuarioExistente.setNome(usuario.getNome());
-        usuarioExistente.setId(usuario.getId());
         usuarioExistente.setEmail(usuario.getEmail());
         usuarioExistente.setSenha(usuario.getSenha());
         usuarioExistente.setFoto(usuario.getFoto());

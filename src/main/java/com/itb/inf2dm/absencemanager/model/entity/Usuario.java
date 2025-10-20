@@ -1,6 +1,8 @@
 package com.itb.inf2dm.absencemanager.model.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,6 +14,14 @@ public class Usuario {
     private Integer id;
     @Column(length = 100, nullable = true)
     private String nome;
+    @Column(length = 45, nullable = true)
+    private String sexo;
+    @Column(length = 45, nullable = false)
+    private String rm;
+    @Column(length = 45, nullable = true)
+    private String telefone;
+    @Column( nullable = true)
+    private LocalDate dataNascimento;
     @Column(length = 45, nullable = false)
     private String email;
     @Column(length = 100, nullable = false)
@@ -25,17 +35,13 @@ public class Usuario {
     @Column(length = 25, nullable = false)
     private String statusUsuario;
 
-
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-
-    //-----------------------
 
     public String getNome() {
         return nome;
@@ -45,7 +51,37 @@ public class Usuario {
         this.nome = nome;
     }
 
-    //-----------------------
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public String getRm() {
+        return rm;
+    }
+
+    public void setRm(String rm) {
+        this.rm = rm;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
 
     public String getEmail() {
         return email;
@@ -55,8 +91,6 @@ public class Usuario {
         this.email = email;
     }
 
-    //-----------------------
-
     public String getSenha() {
         return senha;
     }
@@ -64,8 +98,6 @@ public class Usuario {
     public void setSenha(String senha) {
         this.senha = senha;
     }
-
-    //-----------------------
 
     public String getNivelAcesso() {
         return nivelAcesso;
@@ -75,8 +107,6 @@ public class Usuario {
         this.nivelAcesso = nivelAcesso;
     }
 
-    //-----------------------
-
     public byte[] getFoto() {
         return foto;
     }
@@ -84,8 +114,6 @@ public class Usuario {
     public void setFoto(byte[] foto) {
         this.foto = foto;
     }
-
-    //-----------------------
 
     public LocalDateTime getDataCadastro() {
         return dataCadastro;
@@ -95,8 +123,6 @@ public class Usuario {
         this.dataCadastro = dataCadastro;
     }
 
-    //-----------------------
-
     public String getStatusUsuario() {
         return statusUsuario;
     }
@@ -104,5 +130,4 @@ public class Usuario {
     public void setStatusUsuario(String statusUsuario) {
         this.statusUsuario = statusUsuario;
     }
-
 }

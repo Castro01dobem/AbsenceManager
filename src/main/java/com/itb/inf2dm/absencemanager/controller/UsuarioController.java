@@ -1,5 +1,6 @@
 package com.itb.inf2dm.absencemanager.controller;
 
+import com.itb.inf2dm.absencemanager.model.entity.Usuario;
 import com.itb.inf2dm.absencemanager.model.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
