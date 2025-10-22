@@ -21,7 +21,7 @@ ResponseEntity : Toda resposta HTTP (status, cabeçalhos e corpo ), aqui teremos
 */
 
 @RestController
-@RequestMapping("/api/v1/AlunoTurma")
+@RequestMapping("/api/v1/UsuarioTurma")
 public class UsuarioTurmaController {
 
     @Autowired
