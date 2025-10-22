@@ -33,7 +33,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    @PostMapping
+    @PostMapping("/cadastrar")
     public ResponseEntity<Usuario> salvarUsuario(@RequestBody Usuario usuario) {
         Usuario novoUsuario = usuarioService.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
@@ -64,7 +64,7 @@ public class UsuarioController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("atualizar/{id}")
     public ResponseEntity<Object> atualizarUsuario(@PathVariable String id, @RequestBody Usuario usuario) {
         try {
             return ResponseEntity.ok(usuarioService.update(Integer.parseInt(id), usuario));
@@ -88,7 +88,7 @@ public class UsuarioController {
             );
         }
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("deletar/{id}")
     public ResponseEntity<Object> deletarUsuarioPorId(@PathVariable String id) {
         try {
             usuarioService.delete(Integer.parseInt(id));
