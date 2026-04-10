@@ -5,9 +5,8 @@ import com.itb.inf2dm.absencemanager.model.repository.AulaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
-// @Autowired: Injeção de Dependência, ou seja, a referida classe exige o objeto declarado abaixo.
 
 @Service
 public class AulaService {
@@ -15,39 +14,37 @@ public class AulaService {
     @Autowired
     private AulaRepository aulaRepository;
 
-
-    // Listar todos os produtos
     public List<Aula> findAll() {
         return aulaRepository.findAll();
     }
 
-    // Salvar Produto
     public Aula save(Aula aula) {
-        aula.setConteudo("");
+        aula.setId(null);
+        aula.setDataCadastro(LocalDateTime.now());
+        aula.setStatusAula("ATIVO");
         return aulaRepository.save(aula);
     }
 
-    // Listar Produto por Id
     public Aula findById(int id) {
         return aulaRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Aula não encontrado com o id:" + id));
+                .orElseThrow(() -> new RuntimeException("Aula não encontrada com o id: " + id));
     }
 
-    // Atualizar Produto
     public Aula update(int id, Aula aula) {
-        Aula aulaExistente = findById(id);
-        aulaExistente.setConteudo(aula.getConteudo());
-        aulaExistente.setId(aula.getId());
-        aulaExistente.setDataAula(aula.getDataAula());
-        aulaExistente.setHorarioAula(aula.getHorarioAula());
-        aulaExistente.setQrCode(aula.getQrCode());
-        return aulaRepository.save(aulaExistente);
+        Aula existente = findById(id);
+        existente.setTituloAula(aula.getTituloAula());
+        existente.setInstrumento(aula.getInstrumento());
+        existente.setDataAula(aula.getDataAula());
+        existente.setHora(aula.getHora());
+        existente.setDuracao(aula.getDuracao());
+        existente.setObs(aula.getObs());
+        existente.setUsuario(aula.getUsuario());
+        existente.setStatusAula(aula.getStatusAula());
+        existente.setDataAtualizacao(LocalDateTime.now());
+        return aulaRepository.save(existente);
     }
 
-
-    // Excluir Aluno
     public void delete(int id) {
-        Aula aulaExistente = findById(id);
-        aulaRepository.delete(aulaExistente);
+        aulaRepository.delete(findById(id));
     }
 }

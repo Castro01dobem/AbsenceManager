@@ -1,133 +1,55 @@
 package com.itb.inf2dm.absencemanager.model.entity;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "Usuario")
 public class Usuario {
 
-    //VERIFICAR
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(length = 100, nullable = true)
-    private String nome;
-    @Column(length = 45, nullable = true)
-    private String sexo;
-    @Column(length = 45, nullable = false)
-    private String rm;
-    @Column(length = 45, nullable = true)
-    private String telefone;
-    @Column( nullable = true)
-    private LocalDate dataNascimento;
-    @Column(length = 45, nullable = false)
-    private String email;
+
     @Column(length = 100, nullable = false)
+    private String nome;
+
+    @Column(length = 100, nullable = false)
+    private String username;
+
+    @Column(name = "senha", length = 100, nullable = false)
     private String senha;
-    @Column(length = 25, nullable = false)
-    private String nivelAcesso;
-    @Column(nullable = true)
+
+    @Column(length = 10)
+    private String nivelAcesso; // ADMIN, PROFESSOR, ALUNO
+
+    @Lob
     private byte[] foto;
-    @Column(length =8, nullable = false)
+
+    @Column(nullable = false)
     private LocalDateTime dataCadastro;
-    @Column(length = 25, nullable = false)
-    private String statusUsuario;
 
-    public Integer getId() {
-        return id;
-    }
+    private LocalDateTime dataAtualizacao;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    @Column(length = 20, nullable = false)
+    private String statusUsuario; // ATIVO, INATIVO, TROCAR_SENHA
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
-    }
-
-    public String getRm() {
-        return rm;
-    }
-
-    public void setRm(String rm) {
-        this.rm = rm;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public String getNivelAcesso() {
-        return nivelAcesso;
-    }
-
-    public void setNivelAcesso(String nivelAcesso) {
-        this.nivelAcesso = nivelAcesso;
-    }
-
-    public byte[] getFoto() {
-        return foto;
-    }
-
-    public void setFoto(byte[] foto) {
-        this.foto = foto;
-    }
-
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro;
-    }
-
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
-    }
-
-    public String getStatusUsuario() {
-        return statusUsuario;
-    }
-
-    public void setStatusUsuario(String statusUsuario) {
-        this.statusUsuario = statusUsuario;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
+    public String getNivelAcesso() { return nivelAcesso; }
+    public void setNivelAcesso(String nivelAcesso) { this.nivelAcesso = nivelAcesso; }
+    public byte[] getFoto() { return foto; }
+    public void setFoto(byte[] foto) { this.foto = foto; }
+    public LocalDateTime getDataCadastro() { return dataCadastro; }
+    public void setDataCadastro(LocalDateTime dataCadastro) { this.dataCadastro = dataCadastro; }
+    public LocalDateTime getDataAtualizacao() { return dataAtualizacao; }
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) { this.dataAtualizacao = dataAtualizacao; }
+    public String getStatusUsuario() { return statusUsuario; }
+    public void setStatusUsuario(String statusUsuario) { this.statusUsuario = statusUsuario; }
 }

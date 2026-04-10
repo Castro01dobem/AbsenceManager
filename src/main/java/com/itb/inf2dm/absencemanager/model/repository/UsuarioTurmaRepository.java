@@ -1,10 +1,3 @@
 package com.itb.inf2dm.absencemanager.model.repository;
 
-import com.itb.inf2dm.absencemanager.model.entity.UsuarioTurma;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface UsuarioTurmaRepository extends JpaRepository<UsuarioTurma, Integer> {
-
-}
+// Tabela UsuarioTurma não existe no banco atual. Repository desativado.

@@ -1,73 +1,67 @@
 package com.itb.inf2dm.absencemanager.model.entity;
 
 import jakarta.persistence.*;
-
-import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "Aula")
 public class Aula {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(length =4, nullable = false)
-    private Time horarioAula;
-    @Column(length =8, nullable = false)
-    private LocalDateTime dataAula;
-    @Column(length = 100, nullable = false)
-    private String conteudo;
-    private byte[] qrCode;
 
+    @Column(length = 50, nullable = false)
+    private String tituloAula;
 
+    @Column(length = 200)
+    private String instrumento;
 
-    public int getId() {
-        return id;
-    }
+    @Column(nullable = false)
+    private LocalDate dataAula;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    @Column(length = 20, nullable = false)
+    private String hora;
 
-    //-----------------------
+    @Column(length = 20)
+    private String duracao;
 
-    public Time getHorarioAula() {
-        return horarioAula;
-    }
+    @Column(length = 200)
+    private String obs;
 
-    public void setHorarioAula(Time horarioAula) {
-        this.horarioAula = horarioAula;
-    }
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
-    //-----------------------
+    @Column(nullable = false)
+    private LocalDateTime dataCadastro;
 
-    public LocalDateTime getDataAula() {
-        return dataAula;
-    }
+    private LocalDateTime dataAtualizacao;
 
-    public void setDataAula(LocalDateTime dataAula) {
-        this.dataAula = dataAula;
-    }
+    @Column(length = 20, nullable = false)
+    private String statusAula; // ATIVO, INATIVO
 
-    //-----------------------
-
-    public String getConteudo() {
-        return conteudo;
-    }
-
-    public void setConteudo(String conteudo) {
-        this.conteudo = conteudo;
-    }
-
-    //-----------------------
-
-    public byte[] getQrCode() {
-        return qrCode;
-    }
-
-    public void setQrCode(byte[] qrCode) {
-        this.qrCode = qrCode;
-    }
-
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public String getTituloAula() { return tituloAula; }
+    public void setTituloAula(String tituloAula) { this.tituloAula = tituloAula; }
+    public String getInstrumento() { return instrumento; }
+    public void setInstrumento(String instrumento) { this.instrumento = instrumento; }
+    public LocalDate getDataAula() { return dataAula; }
+    public void setDataAula(LocalDate dataAula) { this.dataAula = dataAula; }
+    public String getHora() { return hora; }
+    public void setHora(String hora) { this.hora = hora; }
+    public String getDuracao() { return duracao; }
+    public void setDuracao(String duracao) { this.duracao = duracao; }
+    public String getObs() { return obs; }
+    public void setObs(String obs) { this.obs = obs; }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public LocalDateTime getDataCadastro() { return dataCadastro; }
+    public void setDataCadastro(LocalDateTime dataCadastro) { this.dataCadastro = dataCadastro; }
+    public LocalDateTime getDataAtualizacao() { return dataAtualizacao; }
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) { this.dataAtualizacao = dataAtualizacao; }
+    public String getStatusAula() { return statusAula; }
+    public void setStatusAula(String statusAula) { this.statusAula = statusAula; }
 }
-
