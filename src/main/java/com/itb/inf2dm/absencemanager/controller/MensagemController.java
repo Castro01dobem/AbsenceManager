@@ -1,7 +1,8 @@
 package com.itb.inf2dm.absencemanager.controller;
 
 import com.itb.inf2dm.absencemanager.model.entity.Mensagem;
-import com.itb.inf2dm.absencemanager.model.services.MensagemService;
+import com.itb.inf2dm.absencemanager.services.MensagemService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

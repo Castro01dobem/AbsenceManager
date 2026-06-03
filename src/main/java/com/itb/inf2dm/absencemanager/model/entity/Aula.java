@@ -2,7 +2,7 @@ package com.itb.inf2dm.absencemanager.model.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "Aula")
@@ -10,58 +10,80 @@ public class Aula {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(length = 50, nullable = false)
-    private String tituloAula;
-
-    @Column(length = 200)
-    private String instrumento;
-
-    @Column(nullable = false)
-    private LocalDate dataAula;
-
-    @Column(length = 20, nullable = false)
-    private String hora;
-
-    @Column(length = 20)
-    private String duracao;
-
-    @Column(length = 200)
-    private String obs;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "turma_id")
+    private Turma turma;
 
-    @Column(nullable = false)
-    private LocalDateTime dataCadastro;
+    private LocalDate data;
 
-    private LocalDateTime dataAtualizacao;
+    @Column(name = "hora_inicio")
+    private LocalTime horaInicio;
 
-    @Column(length = 20, nullable = false)
-    private String statusAula; // ATIVO, INATIVO
+    @Column(name = "hora_fim")
+    private LocalTime horaFim;
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-    public String getTituloAula() { return tituloAula; }
-    public void setTituloAula(String tituloAula) { this.tituloAula = tituloAula; }
-    public String getInstrumento() { return instrumento; }
-    public void setInstrumento(String instrumento) { this.instrumento = instrumento; }
-    public LocalDate getDataAula() { return dataAula; }
-    public void setDataAula(LocalDate dataAula) { this.dataAula = dataAula; }
-    public String getHora() { return hora; }
-    public void setHora(String hora) { this.hora = hora; }
-    public String getDuracao() { return duracao; }
-    public void setDuracao(String duracao) { this.duracao = duracao; }
-    public String getObs() { return obs; }
-    public void setObs(String obs) { this.obs = obs; }
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
-    public LocalDateTime getDataCadastro() { return dataCadastro; }
-    public void setDataCadastro(LocalDateTime dataCadastro) { this.dataCadastro = dataCadastro; }
-    public LocalDateTime getDataAtualizacao() { return dataAtualizacao; }
-    public void setDataAtualizacao(LocalDateTime dataAtualizacao) { this.dataAtualizacao = dataAtualizacao; }
-    public String getStatusAula() { return statusAula; }
-    public void setStatusAula(String statusAula) { this.statusAula = statusAula; }
+    private String conteudo;
+
+    private Boolean status;
+
+    public Aula() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Turma getTurma() {
+        return turma;
+    }
+
+    public void setTurma(Turma turma) {
+        this.turma = turma;
+    }
+
+    public LocalDate getData() {
+        return data;
+    }
+
+    public void setData(LocalDate data) {
+        this.data = data;
+    }
+
+    public LocalTime getHoraInicio() {
+        return horaInicio;
+    }
+
+    public void setHoraInicio(LocalTime horaInicio) {
+        this.horaInicio = horaInicio;
+    }
+
+    public LocalTime getHoraFim() {
+        return horaFim;
+    }
+
+    public void setHoraFim(LocalTime horaFim) {
+        this.horaFim = horaFim;
+    }
+
+    public String getConteudo() {
+        return conteudo;
+    }
+
+    public void setConteudo(String conteudo) {
+        this.conteudo = conteudo;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
 }

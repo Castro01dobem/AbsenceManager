@@ -1,4 +1,4 @@
-package com.itb.inf2dm.absencemanager.model.services;
+package com.itb.inf2dm.absencemanager.services;
 
 import com.itb.inf2dm.absencemanager.model.entity.Aula;
 import com.itb.inf2dm.absencemanager.model.repository.AulaRepository;
@@ -25,7 +25,7 @@ public class AulaService {
         return aulaRepository.save(aula);
     }
 
-    public Aula findById(int id) {
+    public Aula findById(long id) {
         return aulaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Aula não encontrada com o id: " + id));
     }

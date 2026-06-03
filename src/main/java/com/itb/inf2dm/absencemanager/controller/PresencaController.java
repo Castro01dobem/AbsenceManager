@@ -1,7 +1,9 @@
 package com.itb.inf2dm.absencemanager.controller;
 
+import com.itb.inf2dm.absencemanager.dto.PresencaRequest;
 import com.itb.inf2dm.absencemanager.model.entity.Presenca;
-import com.itb.inf2dm.absencemanager.model.services.PresencaService;
+import com.itb.inf2dm.absencemanager.services.PresencaService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,18 @@ public class PresencaController {
 
     @Autowired
     private PresencaService presencaService;
+
+    @PostMapping("/registrar")
+    public String registrar(@RequestBody PresencaRequest request) {
+
+        presencaService.registrarPresenca(
+                request.getAlunoRm(),
+                request.getAulaId(),
+                request.getToken()
+        );
+
+        return "Presença registrada com sucesso";
+    }
 
     @GetMapping
     @Operation(summary = "Listar todas as presenças")

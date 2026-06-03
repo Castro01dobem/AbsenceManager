@@ -1,4 +1,4 @@
-package com.itb.inf2dm.absencemanager.model.services;
+package com.itb.inf2dm.absencemanager.services;
 
 import com.itb.inf2dm.absencemanager.model.entity.Mensagem;
 import com.itb.inf2dm.absencemanager.model.repository.MensagemRepository;

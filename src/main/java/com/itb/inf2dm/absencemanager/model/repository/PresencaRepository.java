@@ -6,4 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PresencaRepository extends JpaRepository<Presenca, Integer> {
+    
+    boolean existsByAlunoRmAndAulaId(Integer alunoRm, Long aulaId);
 }
+
+

@@ -1,0 +1,1 @@
+package com.itb.inf2dm.absencemanager.controller; import org.springframework.web.bind.annotation.*; @RestController @RequestMapping("/api/relatorios") public class RelatorioController{ @GetMapping("/health") public String health(){return "Relatorios OK";} }

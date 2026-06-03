@@ -1,3 +1,11 @@
 package com.itb.inf2dm.absencemanager.model.repository;
 
-// Tabela Turma não existe no banco atual. Repository desativado.
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.itb.inf2dm.absencemanager.model.entity.Turma;
+
+@Repository
+public interface TurmaRepository extends JpaRepository<Turma, Long> {
+
+}

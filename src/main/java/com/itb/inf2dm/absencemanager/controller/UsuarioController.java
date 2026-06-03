@@ -1,71 +1,89 @@
 package com.itb.inf2dm.absencemanager.controller;
 
 import com.itb.inf2dm.absencemanager.model.entity.Usuario;
-import com.itb.inf2dm.absencemanager.model.services.UsuarioService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.itb.inf2dm.absencemanager.services.UsuarioService;
+import com.itb.inf2dm.absencemanager.dto.UsuarioDTO;
 
 import java.util.List;
-import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/v1/usuario")
-@Tag(name = "Usuario", description = "Gerenciamento de usuários do sistema")
+@RequestMapping("/usuarios")
 public class UsuarioController {
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
-    @GetMapping
-    @Operation(summary = "Listar todos os usuários")
-    public ResponseEntity<List<Usuario>> listar() {
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
+        Usuario createdUsuario = usuarioService.create(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUsuario);
+    }
+
+    @PutMapping(
+            value = "/{id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<Usuario> editar(
+            @PathVariable Long id,
+            @RequestPart(required = false) MultipartFile file,
+            @RequestPart Usuario usuario) {
+
+        Usuario usuarioAtualizado = usuarioService.editar(file, id, usuario);
+        return ResponseEntity.ok(usuarioAtualizado);
+    }
+
+    @PutMapping("/{id}/alterar-senha")
+    public ResponseEntity<Usuario>  alterarSenha(@PathVariable Long id,
+            @RequestParam String newPassword) {
+        Usuario usuario = usuarioService.alterarSenha(id, newPassword);
+        return ResponseEntity.ok(usuario);
+    }
+
+    @PutMapping("/{id}/inativar")
+    public ResponseEntity<Usuario>  inativar(@PathVariable Long id) {
+        Usuario usuario = usuarioService.inativar(id);
+        return ResponseEntity.ok(usuario);
+    }
+
+    @PutMapping("/{id}/ativar")
+    public ResponseEntity<Usuario>  ativar(@PathVariable Long id) {
+        Usuario usuario = usuarioService.ativar(id);
+        return ResponseEntity.ok(usuario);
+    }
+
+    @GetMapping("/me")
+    public UsuarioDTO me(Authentication authentication) {
+        UsuarioDTO usuario = usuarioService
+                .findByUsername(authentication);
+        return usuario;
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<UsuarioDTO>> findAll() {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    @PostMapping
-    @Operation(summary = "Cadastrar novo usuário")
-    public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(usuario));
-    }
-
     @GetMapping("/{id}")
-    @Operation(summary = "Buscar usuário por ID")
-    public ResponseEntity<Object> buscarPorId(@PathVariable String id) {
-        try {
-            return ResponseEntity.ok(usuarioService.findById(Integer.parseInt(id)));
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "ID inválido: " + id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("status", 404, "message", e.getMessage()));
-        }
+    public ResponseEntity<UsuarioDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.findById(id));
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Atualizar usuário")
-    public ResponseEntity<Object> atualizar(@PathVariable String id, @RequestBody Usuario usuario) {
-        try {
-            return ResponseEntity.ok(usuarioService.update(Integer.parseInt(id), usuario));
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "ID inválido: " + id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("status", 404, "message", e.getMessage()));
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Excluir usuário")
-    public ResponseEntity<Object> deletar(@PathVariable String id) {
-        try {
-            usuarioService.delete(Integer.parseInt(id));
-            return ResponseEntity.ok(Map.of("status", 200, "message", "Usuário excluído com sucesso!"));
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "ID inválido: " + id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("status", 404, "message", e.getMessage()));
-        }
-    }
 }
