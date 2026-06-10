@@ -35,7 +35,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/mensagens/enviar").permitAll()
                 .requestMatchers("/notificacoes/**").permitAll()
                 // Qualquer outra rota
-                .anyRequest().authenticated()
+                // (dev) permitir acesso sem autenticação para ligar frontend↔backend
+                .anyRequest().permitAll()
             )
 
             // ================= LOGIN =================

@@ -2,6 +2,8 @@ package com.itb.inf2dm.absencemanager.services;
 
 import com.itb.inf2dm.absencemanager.model.entity.Aluno;
 import com.itb.inf2dm.absencemanager.model.repository.AlunoRepository;
+import com.itb.inf2dm.absencemanager.model.repository.PresencaRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,9 @@ public class AlunoService {
 
     @Autowired
     private AlunoRepository alunoRepository;
+
+    @Autowired
+    private PresencaRepository presencaRepository;
 
     public List<Aluno> findAll() {
         return alunoRepository.findAll();
@@ -41,6 +46,28 @@ public class AlunoService {
     }
 
     public void delete(int rm) {
-        alunoRepository.delete(findById(rm));
+        Aluno aluno = findById(rm);
+
+        if (presencaRepository.existsByTurmaAlunoAlunoRm(rm)) {
+            throw new IllegalStateException("Nao e possivel excluir este aluno porque ele possui registros de presenca.");
+        }
+
+        try {
+            alunoRepository.delete(aluno);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalStateException("Nao e possivel excluir este aluno porque ele possui registros relacionados.");
+        }
+    }
+
+    public Aluno inativar(int rm) {
+        Aluno aluno = findById(rm);
+
+        if (aluno.getUsuario() != null) {
+            aluno.getUsuario().setStatusUsuario("INATIVO");
+        }
+        aluno.setStatusAluno("INATIVO");
+
+        return alunoRepository.save(aluno);
     }
 }
+

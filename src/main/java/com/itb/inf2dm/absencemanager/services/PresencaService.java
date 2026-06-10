@@ -2,6 +2,7 @@ package com.itb.inf2dm.absencemanager.services;
 
 import com.itb.inf2dm.absencemanager.model.entity.Aluno;
 import com.itb.inf2dm.absencemanager.model.entity.Aula;
+
 import com.itb.inf2dm.absencemanager.model.entity.Presenca;
 import com.itb.inf2dm.absencemanager.model.entity.QRCode;
 import com.itb.inf2dm.absencemanager.model.repository.AlunoRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Service
 public class PresencaService {
@@ -61,22 +63,23 @@ public class PresencaService {
         }
 
         // 🚫 5. Evitar presença duplicada
-        boolean jaRegistrado = presencaRepository
-                .existsByAlunoRmAndAulaId(alunoRm, aulaId);
+        boolean jaRegistrado = presencaRepository.existsByTurmaAlunoAlunoRmAndAulaId(alunoRm, aulaId);
 
         if (jaRegistrado) {
             throw new RuntimeException("Presença já registrada");
         }
 
+
         // ✅ 6. Salvar presença
         Presenca presenca = new Presenca();
-        presenca.setAluno(aluno);
+        presenca.setTurmaAluno(null);
         presenca.setAula(aula);
-        presenca.setDataCadastro(LocalDateTime.now());
-        presenca.setStatusPresenca(true);
+        presenca.setDataRegistro(LocalDateTime.now());
+        presenca.setPresente(true);
 
         presencaRepository.save(presenca);
     }
+
 
     public List<Presenca> findAll() {
         return presencaRepository.findAll();
@@ -84,24 +87,29 @@ public class PresencaService {
 
     public Presenca save(Presenca presenca) {
         presenca.setId(null);
-        presenca.setDataCadastro(LocalDateTime.now());
+        if (presenca.getDataRegistro() == null) {
+            presenca.setDataRegistro(LocalDateTime.now());
+        }
         return presencaRepository.save(presenca);
     }
 
-    public Presenca findById(int id) {
+    public Presenca findById(Long id) {
         return presencaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Presença não encontrada com o id: " + id));
     }
 
-    public Presenca update(int id, Presenca presenca) {
+    public Presenca update(Long id, Presenca presenca) {
         Presenca existente = findById(id);
-        existente.setAluno(presenca.getAluno());
         existente.setAula(presenca.getAula());
-        existente.setStatusPresenca(presenca.getStatusPresenca());
+        existente.setTurmaAluno(presenca.getTurmaAluno());
+        existente.setPresente(presenca.getPresente());
+        existente.setDataRegistro(presenca.getDataRegistro());
+        existente.setObservacao(presenca.getObservacao());
         return presencaRepository.save(existente);
     }
 
-    public void delete(int id) {
+    public void delete(Long id) {
         presencaRepository.delete(findById(id));
     }
+
 }

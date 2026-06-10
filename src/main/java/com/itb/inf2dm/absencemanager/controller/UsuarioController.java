@@ -5,6 +5,7 @@ import com.itb.inf2dm.absencemanager.services.UsuarioService;
 import com.itb.inf2dm.absencemanager.dto.UsuarioDTO;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,9 +33,14 @@ public class UsuarioController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
-        Usuario createdUsuario = usuarioService.create(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUsuario);
+    public ResponseEntity<Object> create(@RequestBody Usuario usuario) {
+        try {
+            Usuario createdUsuario = usuarioService.create(usuario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUsuario);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("status", 409, "message", e.getMessage()));
+        }
     }
 
     @PutMapping(

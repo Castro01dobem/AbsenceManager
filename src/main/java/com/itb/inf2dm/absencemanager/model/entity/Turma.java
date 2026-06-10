@@ -24,7 +24,7 @@ public class Turma {
     private String obs;
 
     @ManyToOne
-    @JoinColumn(name = "professor_id")
+    @JoinColumn(name = "usuario_id")
     private Usuario professor;
 
     @Column(name = "data_cadastro")

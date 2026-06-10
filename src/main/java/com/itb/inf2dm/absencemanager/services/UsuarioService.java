@@ -51,11 +51,15 @@ public class UsuarioService implements UserDetailsService {
 
     /* ================= CREATE ================= */
     public Usuario create(Usuario usuario) {
+        if (usuarioRepository.findByUsername(usuario.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Este e-mail ja esta cadastrado.");
+        }
 
         Usuario _usuario = new Usuario();
         _usuario.setNome(usuario.getNome());
         _usuario.setUsername(usuario.getUsername());
         _usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        _usuario.setNivelAcesso(usuario.getNivelAcesso());
         _usuario.setStatusUsuario("ATIVO");
         _usuario.setDataCadastro(LocalDateTime.now());
 

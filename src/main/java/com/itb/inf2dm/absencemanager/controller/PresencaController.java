@@ -50,7 +50,7 @@ public class PresencaController {
     @Operation(summary = "Buscar presença por ID")
     public ResponseEntity<Object> buscarPorId(@PathVariable String id) {
         try {
-            return ResponseEntity.ok(presencaService.findById(Integer.parseInt(id)));
+            return ResponseEntity.ok(presencaService.findById(Long.parseLong(id)));
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "ID inválido: " + id));
         } catch (RuntimeException e) {
@@ -62,7 +62,7 @@ public class PresencaController {
     @Operation(summary = "Atualizar presença")
     public ResponseEntity<Object> atualizar(@PathVariable String id, @RequestBody Presenca presenca) {
         try {
-            return ResponseEntity.ok(presencaService.update(Integer.parseInt(id), presenca));
+            return ResponseEntity.ok(presencaService.update(Long.parseLong(id), presenca));
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "ID inválido: " + id));
         } catch (RuntimeException e) {
@@ -74,7 +74,7 @@ public class PresencaController {
     @Operation(summary = "Excluir presença")
     public ResponseEntity<Object> deletar(@PathVariable String id) {
         try {
-            presencaService.delete(Integer.parseInt(id));
+            presencaService.delete(Long.parseLong(id));
             return ResponseEntity.ok(Map.of("status", 200, "message", "Presença excluída com sucesso!"));
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "ID inválido: " + id));
