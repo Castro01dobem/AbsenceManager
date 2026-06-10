@@ -4,13 +4,13 @@ package com.itb.inf2dm.absencemanager.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,17 +19,18 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource)
             throws Exception {
 
         http
             // ================= CSRF / CORS =================
             .csrf(AbstractHttpConfigurer::disable)
-            .cors(Customizer.withDefaults())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
 
             // ================= AUTORIZAÇÃO =================
             .authorizeHttpRequests(auth -> auth
                 // Público
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                 .requestMatchers("/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/mensagens/enviar").permitAll()

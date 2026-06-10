@@ -27,6 +27,9 @@ public class CorsConfig {
                 "http://localhost:5174",
                 "http://127.0.0.1:5173",
                 "http://127.0.0.1:5174",
+                "https://absencemanager-2xqj6fs7j-rodriguesdobems-projects.vercel.app",
+                "https://absencemanager-*.vercel.app",
+                "https://*.rodriguesdobems-projects.vercel.app",
                 "https://*.vercel.app"
         ));
 
