@@ -22,15 +22,11 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // ✅ Origens permitidas (frontend)
-        config.setAllowedOrigins(List.of(
+        config.setAllowedOriginPatterns(List.of(
                 "http://localhost:5173",
                 "http://localhost:5174",
                 "http://127.0.0.1:5173",
                 "http://127.0.0.1:5174",
-                "https://absence-manager.vercel.app",
-                "https://absencemanager-mzl23yefy-rodriguesdobems-projects.vercel.app"
-        ));
-        config.setAllowedOriginPatterns(List.of(
                 "https://*.vercel.app"
         ));
 
