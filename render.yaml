@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: absence-manager-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: ohio
+    plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        scope: run
+        value: jdbc:sqlserver://AbsenceManager.mssql.somee.com:1433;databaseName=AbsenceManager;integratedSecurity=false;encrypt=true;trustServerCertificate=true
+      - key: SPRING_DATASOURCE_USERNAME
+        scope: run
+        value: Castrinho
+      - key: SPRING_DATASOURCE_PASSWORD
+        scope: run
+        sync: false
+      - key: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+        value: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      - key: SPRING_JPA_DATABASE_PLATFORM
+        value: org.hibernate.dialect.SQLServerDialect
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: PORT
+        value: '8080'

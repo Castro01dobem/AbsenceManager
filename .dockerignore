@@ -1,0 +1,11 @@
+.git
+.gitignore
+.gitattributes
+.github
+README.md
+TODO.md
+target
+.mvn
+*.md
+*.log
+.DS_Store
