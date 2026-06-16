@@ -62,9 +62,11 @@ public class ChamadaService {
         }
 
         LocalDateTime agora = LocalDateTime.now();
+        String token = gerarTokenUnico();
         Chamada chamada = new Chamada();
         chamada.setTurma(turma);
-        chamada.setToken(gerarTokenUnico());
+        chamada.setToken(token);
+        chamada.setQrCodePayload(montarPayload(token));
         chamada.setDataGeracao(agora);
         chamada.setDataExpiracao(agora.plusHours(DURACAO_HORAS));
         chamada.setStatus(STATUS_ATIVA);
@@ -191,7 +193,7 @@ public class ChamadaService {
                 chamada.getTurma().getId(),
                 chamada.getTurma().getNome(),
                 chamada.getToken(),
-                montarPayload(chamada.getToken()),
+                getQrCodePayload(chamada),
                 chamada.getDataGeracao(),
                 chamada.getDataExpiracao(),
                 chamada.getStatus(),
@@ -216,6 +218,14 @@ public class ChamadaService {
 
     private String montarPayload(String token) {
         return "absencemanager://confirmar-presenca?token=" + token;
+    }
+
+    private String getQrCodePayload(Chamada chamada) {
+        if (chamada.getQrCodePayload() != null && !chamada.getQrCodePayload().isBlank()) {
+            return chamada.getQrCodePayload();
+        }
+
+        return montarPayload(chamada.getToken());
     }
 
     private String gerarTokenUnico() {

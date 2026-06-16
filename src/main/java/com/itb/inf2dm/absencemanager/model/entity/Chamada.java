@@ -25,6 +25,9 @@ public class Chamada {
     @Column(nullable = false, unique = true, length = 100)
     private String token;
 
+    @Column(name = "qr_code_payload", nullable = false, length = 255)
+    private String qrCodePayload;
+
     @Column(name = "data_geracao", nullable = false)
     private LocalDateTime dataGeracao;
 
@@ -56,6 +59,14 @@ public class Chamada {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getQrCodePayload() {
+        return qrCodePayload;
+    }
+
+    public void setQrCodePayload(String qrCodePayload) {
+        this.qrCodePayload = qrCodePayload;
     }
 
     public LocalDateTime getDataGeracao() {
