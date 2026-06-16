@@ -26,4 +26,10 @@ public class QRCodeController {
 
         return ResponseEntity.ok(imagem);
     }
+
+    @GetMapping(value = "/gerar-texto", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> gerarQRCodePorTexto(@RequestParam String texto) {
+        byte[] imagem = qrCodeService.gerarQRCode(texto, 300, 300);
+        return ResponseEntity.ok(imagem);
+    }
 }
