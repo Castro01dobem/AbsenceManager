@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChamadaService {
 
     private static final String STATUS_ATIVA = "ATIVA";
+    private static final String STATUS_ENCERRADA = "ENCERRADA";
     private static final String STATUS_PRESENTE = "PRESENTE";
     private static final String STATUS_FALTA = "FALTA";
     private static final int DURACAO_HORAS = 2;
@@ -121,6 +122,34 @@ public class ChamadaService {
 
         if (!chamada.getTurma().getId().equals(turmaId)) {
             throw new IllegalArgumentException("Chamada nao pertence a esta turma.");
+        }
+
+        return montarDetalhes(chamada);
+    }
+
+    public List<ChamadaDetalhesResponseDTO> listarRecentes(Long turmaId) {
+        if (!turmaRepository.existsById(turmaId)) {
+            throw new RuntimeException("Turma nao encontrada com o id: " + turmaId);
+        }
+
+        return chamadaRepository.findTop5ByTurma_IdOrderByDataGeracaoDesc(turmaId)
+                .stream()
+                .map(this::montarDetalhes)
+                .toList();
+    }
+
+    @Transactional
+    public ChamadaDetalhesResponseDTO confirmarChamada(Long turmaId, Long chamadaId) {
+        Chamada chamada = chamadaRepository.findById(chamadaId)
+                .orElseThrow(() -> new RuntimeException("Chamada nao encontrada com o id: " + chamadaId));
+
+        if (!chamada.getTurma().getId().equals(turmaId)) {
+            throw new IllegalArgumentException("Chamada nao pertence a esta turma.");
+        }
+
+        if (!STATUS_ENCERRADA.equals(chamada.getStatus())) {
+            chamada.setStatus(STATUS_ENCERRADA);
+            chamadaRepository.save(chamada);
         }
 
         return montarDetalhes(chamada);

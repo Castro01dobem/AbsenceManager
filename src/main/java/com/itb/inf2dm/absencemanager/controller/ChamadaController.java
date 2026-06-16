@@ -5,6 +5,7 @@ import com.itb.inf2dm.absencemanager.dto.ConfirmarPresencaRequestDTO;
 import com.itb.inf2dm.absencemanager.dto.CriarChamadaResponseDTO;
 import com.itb.inf2dm.absencemanager.services.ChamadaService;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,18 @@ public class ChamadaController {
     public ResponseEntity<ChamadaDetalhesResponseDTO> buscarChamada(@PathVariable Long turmaId,
             @PathVariable Long chamadaId) {
         return ResponseEntity.ok(chamadaService.buscarDetalhes(turmaId, chamadaId));
+    }
+
+    @GetMapping({"/api/turmas/{turmaId}/chamadas", "/turmas/{turmaId}/chamadas"})
+    public ResponseEntity<List<ChamadaDetalhesResponseDTO>> listarChamadasRecentes(@PathVariable Long turmaId) {
+        return ResponseEntity.ok(chamadaService.listarRecentes(turmaId));
+    }
+
+    @PostMapping({"/api/turmas/{turmaId}/chamadas/{chamadaId}/confirmar",
+            "/turmas/{turmaId}/chamadas/{chamadaId}/confirmar"})
+    public ResponseEntity<ChamadaDetalhesResponseDTO> confirmarChamada(@PathVariable Long turmaId,
+            @PathVariable Long chamadaId) {
+        return ResponseEntity.ok(chamadaService.confirmarChamada(turmaId, chamadaId));
     }
 
     @PostMapping({"/api/chamadas/confirmar-presenca", "/chamadas/confirmar-presenca"})
