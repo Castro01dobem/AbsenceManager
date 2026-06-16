@@ -49,8 +49,8 @@ public class UsuarioController {
     )
     public ResponseEntity<Usuario> editar(
             @PathVariable Long id,
-            @RequestPart(required = false) MultipartFile file,
-            @RequestPart Usuario usuario) {
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @RequestPart(value = "usuario", required = false) Usuario usuario) {
 
         Usuario usuarioAtualizado = usuarioService.editar(file, id, usuario);
         return ResponseEntity.ok(usuarioAtualizado);

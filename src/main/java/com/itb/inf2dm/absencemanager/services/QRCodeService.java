@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import java.util.UUID;
 
 @Service
@@ -34,6 +37,8 @@ public class QRCodeService {
                 }
             }
 
+
+
             ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
             ImageIO.write(image, "PNG", pngOutputStream);
 
@@ -51,8 +56,14 @@ public class QRCodeService {
         QRCode qr = new QRCode();
         qr.setAulaId(aulaId);
         qr.setToken(token);
-        qr.setDataGeracao(LocalDateTime.now());
-        qr.setDataExpiracao(LocalDateTime.now().plusMinutes(50)); // expira em 50 min
+        // Evita discrepância de horário (banco/JSON podem aplicar timezone diferente).
+        // Armazena o horário convertido para o fuso do Brasil (America/Sao_Paulo).
+        ZoneId saoPaulo = ZoneId.of("America/Sao_Paulo");
+        LocalDateTime agoraSaoPaulo = Instant.now().atZone(saoPaulo).toLocalDateTime();
+
+        qr.setDataGeracao(agoraSaoPaulo);
+        qr.setDataExpiracao(agoraSaoPaulo.plusMinutes(50)); // expira em 50 min
+
         qr.setAtivo(true);
 
         return repository.save(qr);

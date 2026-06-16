@@ -73,8 +73,20 @@ public class UsuarioService implements UserDetailsService {
                 .orElseThrow(()
                         -> new RuntimeException("Usuário não encontrado"));
 
-        _usuario.setNome(usuario.getNome());
-        _usuario.setNivelAcesso(usuario.getNivelAcesso());
+        if (usuario != null) {
+            if (usuario.getNome() != null && !usuario.getNome().isBlank()) {
+                _usuario.setNome(usuario.getNome());
+            }
+
+            if (usuario.getNivelAcesso() != null && !usuario.getNivelAcesso().isBlank()) {
+                _usuario.setNivelAcesso(usuario.getNivelAcesso());
+            }
+
+            if (usuario.getStatusUsuario() != null && !usuario.getStatusUsuario().isBlank()) {
+                _usuario.setStatusUsuario(usuario.getStatusUsuario());
+            }
+        }
+
         _usuario.setDataAtualizacao(LocalDateTime.now());
 
         if (file != null && file.getSize() > 0) {
