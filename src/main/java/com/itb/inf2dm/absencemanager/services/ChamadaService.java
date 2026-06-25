@@ -140,6 +140,17 @@ public class ChamadaService {
                 .toList();
     }
 
+    public List<ChamadaDetalhesResponseDTO> listarPorTurma(Long turmaId) {
+        if (!turmaRepository.existsById(turmaId)) {
+            throw new RuntimeException("Turma nao encontrada com o id: " + turmaId);
+        }
+
+        return chamadaRepository.findByTurma_IdOrderByDataGeracaoDesc(turmaId)
+                .stream()
+                .map(this::montarDetalhes)
+                .toList();
+    }
+
     @Transactional
     public ChamadaDetalhesResponseDTO confirmarChamada(Long turmaId, Long chamadaId) {
         Chamada chamada = chamadaRepository.findById(chamadaId)

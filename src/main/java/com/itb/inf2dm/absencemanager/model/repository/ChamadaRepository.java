@@ -13,5 +13,9 @@ public interface ChamadaRepository extends JpaRepository<Chamada, Long> {
 
     List<Chamada> findTop5ByTurma_IdOrderByDataGeracaoDesc(Long turmaId);
 
+    List<Chamada> findByTurma_IdOrderByDataGeracaoDesc(Long turmaId);
+
+    long countByTurmaProfessorId(Long professorId);
+
     boolean existsByToken(String token);
 }

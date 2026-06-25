@@ -14,4 +14,6 @@ public interface TurmaAlunoRepository extends JpaRepository<TurmaAluno, Long> {
     List<TurmaAluno> findByAlunoRm(Integer alunoRm);
 
     boolean existsByTurmaIdAndAlunoRm(Long turmaId, Integer alunoRm);
+
+    long countDistinctByTurmaIdInAndStatusTrue(List<Long> turmaIds);
 }
