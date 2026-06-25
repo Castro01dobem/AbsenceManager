@@ -51,6 +51,19 @@ public class AlunoController {
         }
     }
 
+    @GetMapping("/{rm}/frequencia")
+    @Operation(summary = "Buscar frequencia do aluno por RM")
+    public ResponseEntity<Object> buscarFrequencia(@PathVariable String rm) {
+        try {
+            return ResponseEntity.ok(alunoService.frequencia(Integer.parseInt(rm)));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "RM invalido: " + rm));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("status", 404, "message", e.getMessage()));
+        }
+    }
+
     @PutMapping("/{rm}")
     @Operation(summary = "Atualizar aluno")
     public ResponseEntity<Object> atualizar(@PathVariable String rm, @RequestBody Aluno aluno) {
@@ -99,4 +112,3 @@ public class AlunoController {
         }
     }
 }
-

@@ -3,13 +3,16 @@ package com.itb.inf2dm.absencemanager.services;
 import com.itb.inf2dm.absencemanager.model.entity.Aluno;
 import com.itb.inf2dm.absencemanager.model.entity.Usuario;
 import com.itb.inf2dm.absencemanager.model.repository.AlunoRepository;
+import com.itb.inf2dm.absencemanager.model.repository.ChamadaAlunoRepository;
 import com.itb.inf2dm.absencemanager.model.repository.PresencaRepository;
 import com.itb.inf2dm.absencemanager.model.repository.UsuarioRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AlunoService {
@@ -22,6 +25,12 @@ public class AlunoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ChamadaAlunoRepository chamadaAlunoRepository;
+
+    private static final String STATUS_PRESENTE = "PRESENTE";
+    private static final String STATUS_FALTA = "FALTA";
 
     public List<Aluno> findAll() {
         return alunoRepository.findAll();
@@ -73,6 +82,23 @@ public class AlunoService {
                 .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o rm: " + rm));
     }
 
+    public Map<String, Object> frequencia(int rm) {
+        Aluno aluno = findById(rm);
+        long presencas = chamadaAlunoRepository.countByAlunoRmAndStatus(rm, STATUS_PRESENTE);
+        long faltas = chamadaAlunoRepository.countByAlunoRmAndStatus(rm, STATUS_FALTA);
+        long totalChamadas = presencas + faltas;
+
+        Map<String, Object> dados = new LinkedHashMap<>();
+        dados.put("rm", aluno.getRm());
+        dados.put("nome", aluno.getNome());
+        dados.put("presencas", presencas);
+        dados.put("faltas", faltas);
+        dados.put("totalChamadas", totalChamadas);
+        dados.put("percentualPresenca", percentual(presencas, totalChamadas));
+        dados.put("percentualFaltas", percentual(faltas, totalChamadas));
+        return dados;
+    }
+
     public Aluno update(int rm, Aluno aluno) {
         Aluno existente = findById(rm);
         existente.setNome(aluno.getNome());
@@ -109,6 +135,13 @@ public class AlunoService {
         aluno.setStatusAluno("INATIVO");
 
         return alunoRepository.save(aluno);
+    }
+
+    private double percentual(long parte, long total) {
+        if (total <= 0) {
+            return 0;
+        }
+        return Math.round((parte * 10000.0) / total) / 100.0;
     }
 }
 

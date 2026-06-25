@@ -24,4 +24,6 @@ public interface ChamadaAlunoRepository extends JpaRepository<ChamadaAluno, Long
     @Query("select count(ca) from ChamadaAluno ca where ca.chamada.turma.id = :turmaId and ca.aluno.rm = :alunoRm and ca.status = :status")
     long countByTurmaIdAndAlunoRmAndStatus(@Param("turmaId") Long turmaId, @Param("alunoRm") Integer alunoRm,
             @Param("status") String status);
+
+    long countByAlunoRmAndStatus(Integer alunoRm, String status);
 }
