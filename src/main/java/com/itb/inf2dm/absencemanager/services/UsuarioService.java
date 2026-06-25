@@ -113,6 +113,22 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.save(_usuario);
     }
 
+    /* ================= ALTERAR NOME ================= */
+    public UsuarioDTO alterarNome(Long id, String novoNome) {
+        if (novoNome == null || novoNome.isBlank()) {
+            throw new IllegalArgumentException("Nome nao pode ficar vazio.");
+        }
+
+        Usuario _usuario = usuarioRepository.findById(id)
+                .orElseThrow(()
+                        -> new RuntimeException("UsuÃ¡rio nÃ£o encontrado"));
+
+        _usuario.setNome(novoNome.trim());
+        _usuario.setDataAtualizacao(LocalDateTime.now());
+
+        return toDTO(usuarioRepository.save(_usuario));
+    }
+
     /* ================= INATIVAR ================= */
     public Usuario inativar(Long id) {
         Usuario _usuario = usuarioRepository.findById(id)
