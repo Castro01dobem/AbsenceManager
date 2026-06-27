@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
 public class ProfessorService {
@@ -23,6 +25,7 @@ public class ProfessorService {
     private static final String NIVEL_PROFESSOR = "PROFESSOR";
     private static final String STATUS_PRESENTE = "PRESENTE";
     private static final String STATUS_FALTA = "FALTA";
+    private static final String HEADER_CURRENT_USERNAME = "X-Current-Username";
 
     private final UsuarioRepository usuarioRepository;
     private final TurmaRepository turmaRepository;
@@ -174,11 +177,12 @@ public class ProfessorService {
     }
 
     private Usuario getProfessor(Authentication authentication) {
-        if (authentication == null || authentication.getName() == null) {
+        String username = resolveUsername(authentication);
+        if (username == null || username.isBlank()) {
             throw new SecurityException("Usuario nao autenticado.");
         }
 
-        Usuario usuario = usuarioRepository.findByUsername(authentication.getName())
+        Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario nao encontrado."));
 
         if (!NIVEL_PROFESSOR.equals(usuario.getNivelAcesso())) {
@@ -186,6 +190,18 @@ public class ProfessorService {
         }
 
         return usuario;
+    }
+
+    private String resolveUsername(Authentication authentication) {
+        if (authentication != null && authentication.getName() != null) {
+            return authentication.getName();
+        }
+
+        if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes) {
+            return attributes.getRequest().getHeader(HEADER_CURRENT_USERNAME);
+        }
+
+        return null;
     }
 
     private double percentual(long parte, long total) {
