@@ -1,6 +1,7 @@
 package com.itb.inf2dm.absencemanager.controller;
 
 import com.itb.inf2dm.absencemanager.model.entity.Aluno;
+import com.itb.inf2dm.absencemanager.dto.AlunoUpdateDTO;
 import com.itb.inf2dm.absencemanager.services.AlunoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,11 +67,17 @@ public class AlunoController {
 
     @PutMapping("/{rm}")
     @Operation(summary = "Atualizar aluno")
-    public ResponseEntity<Object> atualizar(@PathVariable String rm, @RequestBody Aluno aluno) {
+    public ResponseEntity<Object> atualizar(@PathVariable String rm, @RequestBody AlunoUpdateDTO request) {
         try {
-            return ResponseEntity.ok(alunoService.update(Integer.parseInt(rm), aluno));
+            if (request.getAluno() == null) {
+                return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "Dados do aluno nao informados."));
+            }
+            return ResponseEntity.ok(alunoService.update(Integer.parseInt(rm), request.getAluno(), request.getTurmaId()));
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(Map.of("status", 400, "message", "RM invalido: " + rm));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("status", 409, "message", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("status", 404, "message", e.getMessage()));

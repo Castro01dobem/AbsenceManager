@@ -28,11 +28,15 @@ public class TurmaAlunoService {
     }
 
     public List<TurmaAluno> findByTurmaId(Long turmaId) {
-        return turmaAlunoRepository.findByTurmaId(turmaId);
+        return turmaAlunoRepository.findByTurmaId(turmaId).stream()
+                .filter(vinculo -> Boolean.TRUE.equals(vinculo.getStatus()))
+                .toList();
     }
 
     public List<TurmaAluno> findByAlunoRm(Integer alunoRm) {
-        return turmaAlunoRepository.findByAlunoRm(alunoRm);
+        return turmaAlunoRepository.findByAlunoRm(alunoRm).stream()
+                .filter(vinculo -> Boolean.TRUE.equals(vinculo.getStatus()))
+                .toList();
     }
 
     public TurmaAluno findById(Long id) {
@@ -51,6 +55,10 @@ public class TurmaAlunoService {
 
         if (turmaAlunoRepository.existsByTurmaIdAndAlunoRm(turmaId, alunoRm)) {
             throw new IllegalArgumentException("Este aluno ja esta vinculado a esta turma.");
+        }
+
+        if (!turmaAlunoRepository.findByAlunoRmAndStatusTrue(alunoRm).isEmpty()) {
+            throw new IllegalArgumentException("Este aluno ja possui uma turma ativa.");
         }
 
         Turma turma = turmaRepository.findById(turmaId)

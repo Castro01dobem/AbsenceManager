@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .requestMatchers("/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/mensagens/enviar").permitAll()
                 .requestMatchers("/notificacoes/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/aluno/*").hasRole("ADMIN")
                 // Qualquer outra rota
                 // (dev) permitir acesso sem autenticação para ligar frontend↔backend
                 .anyRequest().permitAll()

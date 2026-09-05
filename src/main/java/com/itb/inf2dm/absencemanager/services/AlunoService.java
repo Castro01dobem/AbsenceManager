@@ -1,14 +1,19 @@
 package com.itb.inf2dm.absencemanager.services;
 
 import com.itb.inf2dm.absencemanager.model.entity.Aluno;
+import com.itb.inf2dm.absencemanager.model.entity.Turma;
+import com.itb.inf2dm.absencemanager.model.entity.TurmaAluno;
 import com.itb.inf2dm.absencemanager.model.entity.Usuario;
 import com.itb.inf2dm.absencemanager.model.repository.AlunoRepository;
 import com.itb.inf2dm.absencemanager.model.repository.ChamadaAlunoRepository;
 import com.itb.inf2dm.absencemanager.model.repository.PresencaRepository;
 import com.itb.inf2dm.absencemanager.model.repository.UsuarioRepository;
+import com.itb.inf2dm.absencemanager.model.repository.TurmaAlunoRepository;
+import com.itb.inf2dm.absencemanager.model.repository.TurmaRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +33,12 @@ public class AlunoService {
 
     @Autowired
     private ChamadaAlunoRepository chamadaAlunoRepository;
+
+    @Autowired
+    private TurmaAlunoRepository turmaAlunoRepository;
+
+    @Autowired
+    private TurmaRepository turmaRepository;
 
     private static final String STATUS_PRESENTE = "PRESENTE";
     private static final String STATUS_FALTA = "FALTA";
@@ -99,7 +110,8 @@ public class AlunoService {
         return dados;
     }
 
-    public Aluno update(int rm, Aluno aluno) {
+    @Transactional
+    public Aluno update(int rm, Aluno aluno, Long turmaId) {
         Aluno existente = findById(rm);
         existente.setNome(aluno.getNome());
         existente.setEmail(aluno.getEmail());
@@ -109,7 +121,54 @@ public class AlunoService {
         existente.setTelefone(aluno.getTelefone());
         existente.setUsuario(aluno.getUsuario());
         existente.setStatusAluno(aluno.getStatusAluno());
-        return alunoRepository.save(existente);
+        Aluno atualizado = alunoRepository.save(existente);
+
+        // turmaId ausente mantém a compatibilidade com clientes que ainda só editam
+        // os dados cadastrais do aluno.
+        if (turmaId != null) {
+            trocarTurma(atualizado, turmaId);
+        }
+        return atualizado;
+    }
+
+    private void trocarTurma(Aluno aluno, Long turmaId) {
+        Turma novaTurma = turmaRepository.findById(turmaId)
+                .orElseThrow(() -> new RuntimeException("Turma nao encontrada com o id: " + turmaId));
+
+        List<TurmaAluno> vinculosAtivos = turmaAlunoRepository.findByAlunoRmAndStatusTrue(aluno.getRm());
+        TurmaAluno vinculoDestino = turmaAlunoRepository
+                .findByTurmaIdAndAlunoRm(novaTurma.getId(), aluno.getRm())
+                .orElse(null);
+
+        boolean destinoJaAtivo = vinculoDestino != null && Boolean.TRUE.equals(vinculoDestino.getStatus());
+        // Mesma turma, sem duplicação: ainda normaliza vínculos ativos antigos,
+        // caso tenham sido criados antes desta regra.
+        if (!destinoJaAtivo) {
+            Integer vagas = novaTurma.getVagas() == null ? 0 : novaTurma.getVagas();
+            if (vagas <= 0) {
+                throw new IllegalArgumentException("Esta turma nao possui vagas disponiveis.");
+            }
+            novaTurma.setVagas(vagas - 1);
+
+            if (vinculoDestino == null) {
+                vinculoDestino = new TurmaAluno();
+                vinculoDestino.setAluno(aluno);
+                vinculoDestino.setTurma(novaTurma);
+            }
+            vinculoDestino.setStatus(true);
+            turmaAlunoRepository.save(vinculoDestino);
+            turmaRepository.save(novaTurma);
+        }
+
+        for (TurmaAluno vinculo : vinculosAtivos) {
+            if (!novaTurma.getId().equals(vinculo.getTurma().getId())) {
+                vinculo.setStatus(false);
+                Turma turmaAnterior = vinculo.getTurma();
+                turmaAnterior.setVagas((turmaAnterior.getVagas() == null ? 0 : turmaAnterior.getVagas()) + 1);
+                turmaAlunoRepository.save(vinculo);
+                turmaRepository.save(turmaAnterior);
+            }
+        }
     }
 
     public void delete(int rm) {

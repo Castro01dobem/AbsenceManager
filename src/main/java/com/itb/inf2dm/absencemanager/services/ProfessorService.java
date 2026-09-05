@@ -54,7 +54,9 @@ public class ProfessorService {
 
     public List<TurmaAluno> listarAlunos(Authentication authentication, Long turmaId) {
         Turma turma = buscarTurma(authentication, turmaId);
-        return turmaAlunoRepository.findByTurmaId(turma.getId());
+        return turmaAlunoRepository.findByTurmaId(turma.getId()).stream()
+                .filter(vinculo -> Boolean.TRUE.equals(vinculo.getStatus()))
+                .toList();
     }
 
     public Map<String, Object> dashboard(Authentication authentication) {
@@ -123,6 +125,7 @@ public class ProfessorService {
         long total = presentes + faltas;
         List<Map<String, Object>> alunos = turmaAlunoRepository.findByTurmaId(turma.getId())
                 .stream()
+                .filter(vinculo -> Boolean.TRUE.equals(vinculo.getStatus()))
                 .map(vinculo -> {
                     Integer rm = vinculo.getAluno().getRm();
                     long alunoPresentes = chamadaAlunoRepository.countByTurmaIdAndAlunoRmAndStatus(
