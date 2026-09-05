@@ -23,3 +23,7 @@ services:
         value: update
       - key: PORT
         value: '8080'
+      - key: SESSION_COOKIE_SAME_SITE
+        value: none
+      - key: SESSION_COOKIE_SECURE
+        value: 'true'
