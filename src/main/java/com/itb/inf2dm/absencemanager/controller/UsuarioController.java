@@ -60,10 +60,11 @@ public class UsuarioController {
 
     @PutMapping("/{id}/alterar-senha")
     public ResponseEntity<Object> alterarSenha(@PathVariable Long id,
+            @RequestParam String email,
             @RequestParam String senhaAtual,
             @RequestParam String newPassword) {
         try {
-            Usuario usuario = usuarioService.alterarSenha(id, senhaAtual, newPassword);
+            Usuario usuario = usuarioService.alterarSenha(id, email, senhaAtual, newPassword);
             return ResponseEntity.ok(usuario);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

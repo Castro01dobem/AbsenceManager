@@ -40,6 +40,9 @@ public class AlunoService {
     @Autowired
     private TurmaRepository turmaRepository;
 
+    @Autowired
+    private ValidacaoService validacaoService;
+
     private static final String STATUS_PRESENTE = "PRESENTE";
     private static final String STATUS_FALTA = "FALTA";
 
@@ -63,6 +66,9 @@ public class AlunoService {
         }
         if (aluno.getCpf() == null) {
             throw new IllegalArgumentException("cpf nao informado para cadastrar aluno");
+        }
+        if (!validacaoService.validarCpf(aluno.getCpf())) {
+            throw new IllegalArgumentException("CPF invalido.");
         }
         if (aluno.getTelefone() == null) {
             throw new IllegalArgumentException("telefone nao informado para cadastrar aluno");

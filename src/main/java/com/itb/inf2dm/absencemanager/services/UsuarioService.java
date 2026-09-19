@@ -23,11 +23,13 @@ public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ValidacaoService validacaoService;
 
     public UsuarioService(UsuarioRepository usuarioRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder, ValidacaoService validacaoService) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.validacaoService = validacaoService;
     }
 
     /* ================= LOGIN ================= */
@@ -101,10 +103,18 @@ public class UsuarioService implements UserDetailsService {
     }
 
     /* ================= ALTERAR SENHA ================= */
-    public Usuario alterarSenha(Long id, String senhaAtual, String novaSenha) {
+    public Usuario alterarSenha(Long id, String emailConfirmacao, String senhaAtual, String novaSenha) {
         Usuario _usuario = usuarioRepository.findById(id)
                 .orElseThrow(()
                         -> new RuntimeException("Usuário não encontrado"));
+
+        if (!validacaoService.validarFormatoEmail(emailConfirmacao)) {
+            throw new IllegalArgumentException("Informe um e-mail em um formato valido para confirmar sua identidade.");
+        }
+
+        if (!_usuario.getUsername().equalsIgnoreCase(emailConfirmacao.trim())) {
+            throw new IllegalArgumentException("O e-mail informado nao corresponde a esta conta.");
+        }
 
         if (!passwordEncoder.matches(senhaAtual == null ? "" : senhaAtual, _usuario.getPassword())) {
             throw new IllegalArgumentException("Senha atual incorreta.");

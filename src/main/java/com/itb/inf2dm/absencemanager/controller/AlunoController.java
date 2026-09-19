@@ -35,8 +35,15 @@ public class AlunoController {
 
     @PostMapping
     @Operation(summary = "Cadastrar novo aluno")
-    public ResponseEntity<Aluno> cadastrar(@RequestBody Aluno aluno) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.save(aluno));
+    public ResponseEntity<Object> cadastrar(@RequestBody Aluno aluno) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.save(aluno));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("status", 400, "message", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("status", 409, "message", e.getMessage()));
+        }
     }
 
     @GetMapping("/{rm}")
