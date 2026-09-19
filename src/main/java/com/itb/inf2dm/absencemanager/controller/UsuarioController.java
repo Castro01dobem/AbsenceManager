@@ -7,6 +7,8 @@ import com.itb.inf2dm.absencemanager.dto.UsuarioDTO;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
+
+    private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
 
     private final UsuarioService usuarioService;
 
@@ -64,9 +68,23 @@ public class UsuarioController {
             usuarioService.solicitarCodigoTrocaSenha(id);
             return ResponseEntity.ok(Map.of("status", 200, "message", "Codigo enviado para o e-mail cadastrado."));
         } catch (org.springframework.mail.MailException | IllegalStateException e) {
+            log.error("Falha ao enviar codigo de troca de senha para usuario id={}", id, e);
+            String causa = causaRaiz(e).getMessage();
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .body(Map.of("status", 503, "message", "Nao foi possivel enviar o e-mail agora. Tente novamente em instantes."));
+                    .body(Map.of(
+                            "status", 503,
+                            "message", "Nao foi possivel enviar o e-mail agora. Tente novamente em instantes.",
+                            "detalhe", causa == null ? e.getClass().getSimpleName() : causa
+                    ));
         }
+    }
+
+    private Throwable causaRaiz(Throwable e) {
+        Throwable atual = e;
+        while (atual.getCause() != null && atual.getCause() != atual) {
+            atual = atual.getCause();
+        }
+        return atual;
     }
 
     @PutMapping("/{id}/alterar-senha")
