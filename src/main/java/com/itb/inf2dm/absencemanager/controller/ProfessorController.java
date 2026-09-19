@@ -90,6 +90,12 @@ public class ProfessorController {
         return ResponseEntity.ok(professorService.atualizarPresenca(authentication, id, alunoRm, request.getStatus()));
     }
 
+    @PutMapping("/chamadas/{id}/reabrir")
+    public ResponseEntity<ChamadaDetalhesResponseDTO> reabrirChamada(Authentication authentication,
+            @PathVariable Long id) {
+        return ResponseEntity.ok(professorService.reabrirChamada(authentication, id));
+    }
+
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<Map<String, Object>> handleForbidden(SecurityException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("status", 403, "message", e.getMessage()));

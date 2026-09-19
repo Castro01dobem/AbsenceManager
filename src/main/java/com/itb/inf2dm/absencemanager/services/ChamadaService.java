@@ -26,6 +26,7 @@ public class ChamadaService {
 
     private static final String STATUS_ATIVA = "ATIVA";
     private static final String STATUS_ENCERRADA = "ENCERRADA";
+    private static final String STATUS_REABERTA = "REABERTA";
     private static final String STATUS_PRESENTE = "PRESENTE";
     private static final String STATUS_FALTA = "FALTA";
     private static final int DURACAO_HORAS = 2;
@@ -169,6 +170,25 @@ public class ChamadaService {
     }
 
     @Transactional
+    public ChamadaDetalhesResponseDTO reabrirChamada(Long turmaId, Long chamadaId) {
+        Chamada chamada = chamadaRepository.findById(chamadaId)
+                .orElseThrow(() -> new RuntimeException("Chamada nao encontrada com o id: " + chamadaId));
+
+        if (!chamada.getTurma().getId().equals(turmaId)) {
+            throw new IllegalArgumentException("Chamada nao pertence a esta turma.");
+        }
+
+        if (!STATUS_ENCERRADA.equals(chamada.getStatus())) {
+            throw new IllegalArgumentException("Somente uma chamada encerrada pode ser reaberta.");
+        }
+
+        chamada.setStatus(STATUS_REABERTA);
+        chamadaRepository.save(chamada);
+
+        return montarDetalhes(chamada);
+    }
+
+    @Transactional
     public ChamadaDetalhesResponseDTO atualizarStatusManual(Long turmaId, Long chamadaId, Integer alunoRm,
             String novoStatus) {
         Chamada chamada = chamadaRepository.findById(chamadaId)
@@ -178,8 +198,10 @@ public class ChamadaService {
             throw new IllegalArgumentException("Chamada nao pertence a esta turma.");
         }
 
-        if (!STATUS_ATIVA.equals(chamada.getStatus())) {
-            throw new IllegalArgumentException("Nao e possivel alterar a presenca de uma chamada que nao esta ativa.");
+        boolean editavel = STATUS_ATIVA.equals(chamada.getStatus()) || STATUS_REABERTA.equals(chamada.getStatus());
+        if (!editavel) {
+            throw new IllegalArgumentException(
+                    "Nao e possivel alterar a presenca de uma chamada encerrada. Reabra a chamada primeiro.");
         }
 
         String statusNormalizado = novoStatus == null ? "" : novoStatus.trim().toUpperCase();
