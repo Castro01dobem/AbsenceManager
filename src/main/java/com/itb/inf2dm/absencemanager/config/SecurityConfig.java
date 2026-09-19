@@ -1,15 +1,18 @@
 package com.itb.inf2dm.absencemanager.config;
 
 
+import com.itb.inf2dm.absencemanager.services.TokenAuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,13 +22,18 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource,
+            TokenAuthService tokenAuthService, UserDetailsService userDetailsService)
             throws Exception {
+
+        TokenAuthenticationFilter tokenAuthenticationFilter = new TokenAuthenticationFilter(tokenAuthService,
+                userDetailsService);
 
         http
             // ================= CSRF / CORS =================
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
             // ================= AUTORIZAÇÃO =================
             .authorizeHttpRequests(auth -> auth
@@ -57,13 +65,15 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginProcessingUrl("/login")
                 .successHandler((request, response, authentication) -> {
+                    String token = tokenAuthService.criarToken(authentication.getName());
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("application/json");
                     response.getWriter().write("""
                         {
-                          "message": "Login realizado com sucesso"
+                          "message": "Login realizado com sucesso",
+                          "token": "%s"
                         }
-                    """);
+                    """.formatted(token));
                 })
                 .failureHandler((request, response, exception) -> {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -80,6 +90,10 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessHandler((request, response, authentication) -> {
+                    String header = request.getHeader("Authorization");
+                    if (header != null && header.startsWith("Bearer ")) {
+                        tokenAuthService.invalidar(header.substring("Bearer ".length()));
+                    }
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("application/json");
                     response.getWriter().write("""

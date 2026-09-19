@@ -10,7 +10,9 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,10 +78,14 @@ public class UsuarioController {
     }
 
     @GetMapping("/me")
-    public UsuarioDTO me(Authentication authentication) {
-        UsuarioDTO usuario = usuarioService
-                .findByUsername(authentication);
-        return usuario;
+    public ResponseEntity<Object> me(Authentication authentication) {
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("status", 401, "message", "Sessao invalida ou expirada. Faca login novamente."));
+        }
+
+        UsuarioDTO usuario = usuarioService.findByUsername(authentication);
+        return ResponseEntity.ok(usuario);
     }
 
     @GetMapping("/all")
@@ -90,6 +96,11 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.findById(id));
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("status", 404, "message", e.getMessage()));
     }
 
 }
