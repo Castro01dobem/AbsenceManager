@@ -58,13 +58,24 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioAtualizado);
     }
 
+    @PostMapping("/{id}/solicitar-codigo-senha")
+    public ResponseEntity<Object> solicitarCodigoSenha(@PathVariable Long id) {
+        try {
+            usuarioService.solicitarCodigoTrocaSenha(id);
+            return ResponseEntity.ok(Map.of("status", 200, "message", "Codigo enviado para o e-mail cadastrado."));
+        } catch (org.springframework.mail.MailException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body(Map.of("status", 503, "message", "Nao foi possivel enviar o e-mail agora. Tente novamente em instantes."));
+        }
+    }
+
     @PutMapping("/{id}/alterar-senha")
     public ResponseEntity<Object> alterarSenha(@PathVariable Long id,
-            @RequestParam String email,
+            @RequestParam String codigo,
             @RequestParam String senhaAtual,
             @RequestParam String newPassword) {
         try {
-            Usuario usuario = usuarioService.alterarSenha(id, email, senhaAtual, newPassword);
+            Usuario usuario = usuarioService.alterarSenha(id, codigo, senhaAtual, newPassword);
             return ResponseEntity.ok(usuario);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

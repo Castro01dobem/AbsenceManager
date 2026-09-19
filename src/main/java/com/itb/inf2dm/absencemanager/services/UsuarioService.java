@@ -23,13 +23,16 @@ public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ValidacaoService validacaoService;
+    private final CodigoVerificacaoService codigoVerificacaoService;
+    private final EmailService emailService;
 
     public UsuarioService(UsuarioRepository usuarioRepository,
-            PasswordEncoder passwordEncoder, ValidacaoService validacaoService) {
+            PasswordEncoder passwordEncoder,
+            CodigoVerificacaoService codigoVerificacaoService, EmailService emailService) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
-        this.validacaoService = validacaoService;
+        this.codigoVerificacaoService = codigoVerificacaoService;
+        this.emailService = emailService;
     }
 
     /* ================= LOGIN ================= */
@@ -102,18 +105,24 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.save(_usuario);
     }
 
-    /* ================= ALTERAR SENHA ================= */
-    public Usuario alterarSenha(Long id, String emailConfirmacao, String senhaAtual, String novaSenha) {
+    /* ================= CODIGO DE VERIFICACAO (TROCA DE SENHA) ================= */
+    public void solicitarCodigoTrocaSenha(Long id) {
         Usuario _usuario = usuarioRepository.findById(id)
                 .orElseThrow(()
                         -> new RuntimeException("Usuário não encontrado"));
 
-        if (!validacaoService.validarFormatoEmail(emailConfirmacao)) {
-            throw new IllegalArgumentException("Informe um e-mail em um formato valido para confirmar sua identidade.");
-        }
+        String codigo = codigoVerificacaoService.gerarCodigo(id);
+        emailService.enviarCodigoTrocaSenha(_usuario.getUsername(), _usuario.getNome(), codigo);
+    }
 
-        if (!_usuario.getUsername().equalsIgnoreCase(emailConfirmacao.trim())) {
-            throw new IllegalArgumentException("O e-mail informado nao corresponde a esta conta.");
+    /* ================= ALTERAR SENHA ================= */
+    public Usuario alterarSenha(Long id, String codigo, String senhaAtual, String novaSenha) {
+        Usuario _usuario = usuarioRepository.findById(id)
+                .orElseThrow(()
+                        -> new RuntimeException("Usuário não encontrado"));
+
+        if (!codigoVerificacaoService.validarCodigo(id, codigo)) {
+            throw new IllegalArgumentException("Codigo invalido ou expirado. Solicite um novo codigo.");
         }
 
         if (!passwordEncoder.matches(senhaAtual == null ? "" : senhaAtual, _usuario.getPassword())) {
@@ -127,6 +136,7 @@ public class UsuarioService implements UserDetailsService {
         _usuario.setPassword(passwordEncoder.encode(novaSenha));
         _usuario.setStatusUsuario("ATIVO");
         _usuario.setDataAtualizacao(LocalDateTime.now());
+        codigoVerificacaoService.invalidarCodigo(id);
 
         return usuarioRepository.save(_usuario);
     }
