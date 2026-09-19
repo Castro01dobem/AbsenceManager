@@ -44,8 +44,14 @@ public class CorsConfig {
                 "OPTIONS"
         ));
 
-        // ✅ Headers permitidos
-        config.setAllowedHeaders(List.of("*"));
+        // ✅ Headers permitidos (explícitos: alguns navegadores não tratam "*"
+        // corretamente para o header Authorization quando allowCredentials=true)
+        config.setAllowedHeaders(List.of(
+                "Content-Type",
+                "Authorization",
+                "X-Current-Username",
+                "X-Requested-With"
+        ));
 
         // ✅ Headers expostos para o frontend
         config.setExposedHeaders(List.of("Authorization"));
