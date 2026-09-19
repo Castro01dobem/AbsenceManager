@@ -26,4 +26,6 @@ public interface ChamadaAlunoRepository extends JpaRepository<ChamadaAluno, Long
             @Param("status") String status);
 
     long countByAlunoRmAndStatus(Integer alunoRm, String status);
+
+    long countByStatus(String status);
 }

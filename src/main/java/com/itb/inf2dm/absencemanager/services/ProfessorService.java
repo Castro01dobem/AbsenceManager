@@ -122,6 +122,12 @@ public class ProfessorService {
         return chamadaService.confirmarChamada(chamada.getTurma().getId(), chamada.getId());
     }
 
+    public ChamadaDetalhesResponseDTO atualizarPresenca(Authentication authentication, Long chamadaId,
+            Integer alunoRm, String status) {
+        Chamada chamada = getChamadaDoProfessor(authentication, chamadaId);
+        return chamadaService.atualizarStatusManual(chamada.getTurma().getId(), chamada.getId(), alunoRm, status);
+    }
+
     private Map<String, Object> relatorioDaTurma(Turma turma) {
         long presentes = chamadaAlunoRepository.countByTurmaIdAndStatus(turma.getId(), STATUS_PRESENTE);
         long faltas = chamadaAlunoRepository.countByTurmaIdAndStatus(turma.getId(), STATUS_FALTA);

@@ -168,6 +168,35 @@ public class ChamadaService {
         return montarDetalhes(chamada);
     }
 
+    @Transactional
+    public ChamadaDetalhesResponseDTO atualizarStatusManual(Long turmaId, Long chamadaId, Integer alunoRm,
+            String novoStatus) {
+        Chamada chamada = chamadaRepository.findById(chamadaId)
+                .orElseThrow(() -> new RuntimeException("Chamada nao encontrada com o id: " + chamadaId));
+
+        if (!chamada.getTurma().getId().equals(turmaId)) {
+            throw new IllegalArgumentException("Chamada nao pertence a esta turma.");
+        }
+
+        if (!STATUS_ATIVA.equals(chamada.getStatus())) {
+            throw new IllegalArgumentException("Nao e possivel alterar a presenca de uma chamada que nao esta ativa.");
+        }
+
+        String statusNormalizado = novoStatus == null ? "" : novoStatus.trim().toUpperCase();
+        if (!STATUS_PRESENTE.equals(statusNormalizado) && !STATUS_FALTA.equals(statusNormalizado)) {
+            throw new IllegalArgumentException("Status invalido. Utilize PRESENTE ou FALTA.");
+        }
+
+        ChamadaAluno chamadaAluno = chamadaAlunoRepository.findByChamadaIdAndAlunoRm(chamadaId, alunoRm)
+                .orElseThrow(() -> new RuntimeException("Aluno nao possui registro nesta chamada."));
+
+        chamadaAluno.setStatus(statusNormalizado);
+        chamadaAluno.setDataConfirmacao(STATUS_PRESENTE.equals(statusNormalizado) ? LocalDateTime.now() : null);
+        chamadaAlunoRepository.save(chamadaAluno);
+
+        return montarDetalhes(chamada);
+    }
+
     private void validarChamadaAtiva(Chamada chamada) {
         if (!STATUS_ATIVA.equals(chamada.getStatus())) {
             throw new IllegalArgumentException("Chamada inativa.");

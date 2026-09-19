@@ -1,5 +1,6 @@
 package com.itb.inf2dm.absencemanager.controller;
 
+import com.itb.inf2dm.absencemanager.dto.AtualizarPresencaRequestDTO;
 import com.itb.inf2dm.absencemanager.dto.ChamadaDetalhesResponseDTO;
 import com.itb.inf2dm.absencemanager.dto.CriarChamadaResponseDTO;
 import com.itb.inf2dm.absencemanager.model.entity.Turma;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -79,6 +81,13 @@ public class ProfessorController {
     public ResponseEntity<ChamadaDetalhesResponseDTO> encerrarChamada(Authentication authentication,
             @PathVariable Long id) {
         return ResponseEntity.ok(professorService.encerrarChamada(authentication, id));
+    }
+
+    @PutMapping("/chamadas/{id}/alunos/{alunoRm}")
+    public ResponseEntity<ChamadaDetalhesResponseDTO> atualizarPresenca(Authentication authentication,
+            @PathVariable Long id, @PathVariable Integer alunoRm,
+            @RequestBody AtualizarPresencaRequestDTO request) {
+        return ResponseEntity.ok(professorService.atualizarPresenca(authentication, id, alunoRm, request.getStatus()));
     }
 
     @ExceptionHandler(SecurityException.class)

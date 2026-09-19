@@ -1,5 +1,6 @@
 package com.itb.inf2dm.absencemanager.model.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,6 @@ import com.itb.inf2dm.absencemanager.model.entity.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     Optional<Usuario> findByUsername(String username);
+
+    List<Usuario> findByNivelAcesso(String nivelAcesso);
 }
