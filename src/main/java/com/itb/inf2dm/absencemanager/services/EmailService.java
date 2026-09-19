@@ -1,39 +1,59 @@
 package com.itb.inf2dm.absencemanager.services;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
+/**
+ * Envia o codigo de troca de senha via API HTTPS do Brevo
+ * (https://brevo.com), em vez de SMTP direto. Hospedagens free (como o
+ * Render) costumam bloquear as portas SMTP tradicionais (587/465/25) para
+ * evitar abuso de spam; uma chamada HTTPS comum nao sofre esse bloqueio.
+ * Diferente do Resend, o Brevo permite enviar para qualquer destinatario
+ * assim que UM unico e-mail remetente e' verificado (nao precisa de dominio
+ * proprio) - configurado em brevo.from.
+ */
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private static final String BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 
-    @Value("${spring.mail.username:}")
+    private final RestClient restClient = RestClient.create();
+
+    @Value("${brevo.api-key:}")
+    private String apiKey;
+
+    @Value("${brevo.from:}")
     private String remetente;
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
     public void enviarCodigoTrocaSenha(String destinatario, String nomeUsuario, String codigo) {
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException("BREVO_API_KEY nao configurada.");
+        }
+        if (remetente == null || remetente.isBlank()) {
+            throw new IllegalStateException("BREVO_FROM nao configurado (precisa ser um remetente verificado no Brevo).");
+        }
+
+        Map<String, Object> corpo = Map.of(
+                "sender", Map.of("name", "Absence Manager", "email", remetente),
+                "to", List.of(Map.of("email", destinatario)),
+                "subject", "Seu código para trocar a senha",
+                "htmlContent", montarHtml(nomeUsuario, codigo)
+        );
+
         try {
-            MimeMessage mensagem = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mensagem, "UTF-8");
-
-            helper.setTo(destinatario);
-            if (remetente != null && !remetente.isBlank()) {
-                helper.setFrom(remetente, "Absence Manager");
-            }
-            helper.setSubject("Seu código para trocar a senha");
-            helper.setText(montarHtml(nomeUsuario, codigo), true);
-
-            mailSender.send(mensagem);
-        } catch (MessagingException | java.io.UnsupportedEncodingException e) {
-            throw new IllegalStateException("Falha ao montar o e-mail de verificacao.", e);
+            restClient.post()
+                    .uri(BREVO_URL)
+                    .header("api-key", apiKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(corpo)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RuntimeException e) {
+            throw new IllegalStateException("Falha ao enviar e-mail via Brevo: " + e.getMessage(), e);
         }
     }
 

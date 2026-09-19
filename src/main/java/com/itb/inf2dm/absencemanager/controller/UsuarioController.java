@@ -67,7 +67,7 @@ public class UsuarioController {
         try {
             usuarioService.solicitarCodigoTrocaSenha(id);
             return ResponseEntity.ok(Map.of("status", 200, "message", "Codigo enviado para o e-mail cadastrado."));
-        } catch (org.springframework.mail.MailException | IllegalStateException e) {
+        } catch (IllegalStateException e) {
             log.error("Falha ao enviar codigo de troca de senha para usuario id={}", id, e);
             String causa = causaRaiz(e).getMessage();
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
