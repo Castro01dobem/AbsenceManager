@@ -115,6 +115,12 @@ public class UsuarioService implements UserDetailsService {
         emailService.enviarCodigoTrocaSenha(_usuario.getUsername(), _usuario.getNome(), codigo);
     }
 
+    public void verificarCodigoTrocaSenha(Long id, String codigo) {
+        if (!codigoVerificacaoService.validarCodigo(id, codigo)) {
+            throw new IllegalArgumentException("Codigo invalido ou expirado. Solicite um novo codigo.");
+        }
+    }
+
     /* ================= ALTERAR SENHA ================= */
     public Usuario alterarSenha(Long id, String codigo, String senhaAtual, String novaSenha) {
         Usuario _usuario = usuarioRepository.findById(id)

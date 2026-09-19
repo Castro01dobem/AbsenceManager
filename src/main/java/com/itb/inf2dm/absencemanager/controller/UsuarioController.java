@@ -87,6 +87,17 @@ public class UsuarioController {
         return atual;
     }
 
+    @PostMapping("/{id}/verificar-codigo-senha")
+    public ResponseEntity<Object> verificarCodigoSenha(@PathVariable Long id, @RequestParam String codigo) {
+        try {
+            usuarioService.verificarCodigoTrocaSenha(id, codigo);
+            return ResponseEntity.ok(Map.of("status", 200, "message", "Codigo valido."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("status", 400, "message", e.getMessage()));
+        }
+    }
+
     @PutMapping("/{id}/alterar-senha")
     public ResponseEntity<Object> alterarSenha(@PathVariable Long id,
             @RequestParam String codigo,
