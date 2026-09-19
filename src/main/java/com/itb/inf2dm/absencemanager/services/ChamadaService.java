@@ -4,6 +4,7 @@ import com.itb.inf2dm.absencemanager.dto.AlunoChamadaDTO;
 import com.itb.inf2dm.absencemanager.dto.ChamadaDetalhesResponseDTO;
 import com.itb.inf2dm.absencemanager.dto.ConfirmarPresencaRequestDTO;
 import com.itb.inf2dm.absencemanager.dto.CriarChamadaResponseDTO;
+import com.itb.inf2dm.absencemanager.dto.SolicitarCodigoPresencaRequestDTO;
 import com.itb.inf2dm.absencemanager.model.entity.Aluno;
 import com.itb.inf2dm.absencemanager.model.entity.Chamada;
 import com.itb.inf2dm.absencemanager.model.entity.ChamadaAluno;
@@ -36,16 +37,21 @@ public class ChamadaService {
     private final AlunoRepository alunoRepository;
     private final ChamadaRepository chamadaRepository;
     private final ChamadaAlunoRepository chamadaAlunoRepository;
+    private final CodigoVerificacaoService codigoVerificacaoService;
+    private final EmailService emailService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     public ChamadaService(TurmaRepository turmaRepository, TurmaAlunoRepository turmaAlunoRepository,
             AlunoRepository alunoRepository, ChamadaRepository chamadaRepository,
-            ChamadaAlunoRepository chamadaAlunoRepository) {
+            ChamadaAlunoRepository chamadaAlunoRepository, CodigoVerificacaoService codigoVerificacaoService,
+            EmailService emailService) {
         this.turmaRepository = turmaRepository;
         this.turmaAlunoRepository = turmaAlunoRepository;
         this.alunoRepository = alunoRepository;
         this.chamadaRepository = chamadaRepository;
         this.chamadaAlunoRepository = chamadaAlunoRepository;
+        this.codigoVerificacaoService = codigoVerificacaoService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -92,18 +98,29 @@ public class ChamadaService {
     }
 
     @Transactional
+    public void solicitarCodigoPresenca(SolicitarCodigoPresencaRequestDTO request) {
+        Chamada chamada = chamadaRepository.findByToken(request.getToken())
+                .orElseThrow(() -> new IllegalArgumentException("Chamada nao encontrada."));
+
+        validarChamadaAtiva(chamada);
+
+        Aluno aluno = buscarAlunoDaChamada(chamada, request.getEmail());
+        String codigo = codigoVerificacaoService.gerarCodigo(chavePresenca(chamada.getId(), aluno.getRm()));
+        emailService.enviarCodigoConfirmacaoPresenca(aluno.getEmail(), aluno.getNome(), codigo);
+    }
+
+    @Transactional
     public ChamadaDetalhesResponseDTO confirmarPresenca(ConfirmarPresencaRequestDTO request) {
         Chamada chamada = chamadaRepository.findByToken(request.getToken())
                 .orElseThrow(() -> new IllegalArgumentException("Chamada nao encontrada."));
 
         validarChamadaAtiva(chamada);
 
-        String email = request.getEmail() == null ? null : request.getEmail().trim();
-        Aluno aluno = alunoRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Email nao encontrado."));
+        Aluno aluno = buscarAlunoDaChamada(chamada, request.getEmail());
 
-        if (!turmaAlunoRepository.existsByTurmaIdAndAlunoRm(chamada.getTurma().getId(), aluno.getRm())) {
-            throw new IllegalArgumentException("Aluno nao pertence a esta turma.");
+        String chave = chavePresenca(chamada.getId(), aluno.getRm());
+        if (!codigoVerificacaoService.validarCodigo(chave, request.getCodigo())) {
+            throw new IllegalArgumentException("Codigo invalido ou expirado. Solicite um novo codigo.");
         }
 
         ChamadaAluno chamadaAluno = chamadaAlunoRepository
@@ -116,7 +133,25 @@ public class ChamadaService {
             chamadaAlunoRepository.save(chamadaAluno);
         }
 
+        codigoVerificacaoService.invalidarCodigo(chave);
+
         return montarDetalhes(chamada);
+    }
+
+    private Aluno buscarAlunoDaChamada(Chamada chamada, String emailBruto) {
+        String email = emailBruto == null ? null : emailBruto.trim();
+        Aluno aluno = alunoRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Email nao encontrado."));
+
+        if (!turmaAlunoRepository.existsByTurmaIdAndAlunoRm(chamada.getTurma().getId(), aluno.getRm())) {
+            throw new IllegalArgumentException("Aluno nao pertence a esta turma.");
+        }
+
+        return aluno;
+    }
+
+    private String chavePresenca(Long chamadaId, Integer alunoRm) {
+        return "presenca:" + chamadaId + ":" + alunoRm;
     }
 
     public ChamadaDetalhesResponseDTO buscarDetalhes(Long turmaId, Long chamadaId) {

@@ -8,13 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 /**
- * Envia o codigo de troca de senha via API HTTPS do Brevo
- * (https://brevo.com), em vez de SMTP direto. Hospedagens free (como o
- * Render) costumam bloquear as portas SMTP tradicionais (587/465/25) para
- * evitar abuso de spam; uma chamada HTTPS comum nao sofre esse bloqueio.
- * Diferente do Resend, o Brevo permite enviar para qualquer destinatario
- * assim que UM unico e-mail remetente e' verificado (nao precisa de dominio
- * proprio) - configurado em brevo.from.
+ * Envia codigos de verificacao (troca de senha, confirmacao de presenca)
+ * via API HTTPS do Brevo (https://brevo.com), em vez de SMTP direto.
+ * Hospedagens free (como o Render) costumam bloquear as portas SMTP
+ * tradicionais (587/465/25) para evitar abuso de spam; uma chamada HTTPS
+ * comum nao sofre esse bloqueio. Diferente do Resend, o Brevo permite
+ * enviar para qualquer destinatario assim que UM unico e-mail remetente
+ * e' verificado (nao precisa de dominio proprio) - configurado em
+ * brevo.from.
  */
 @Service
 public class EmailService {
@@ -30,6 +31,17 @@ public class EmailService {
     private String remetente;
 
     public void enviarCodigoTrocaSenha(String destinatario, String nomeUsuario, String codigo) {
+        enviarCodigo(destinatario, "Seu código para trocar a senha", nomeUsuario, codigo,
+                "Recebemos um pedido para trocar a senha da sua conta. Use o código abaixo para autorizar essa troca:");
+    }
+
+    public void enviarCodigoConfirmacaoPresenca(String destinatario, String nomeAluno, String codigo) {
+        enviarCodigo(destinatario, "Seu código para confirmar presença", nomeAluno, codigo,
+                "Use o código abaixo para confirmar sua presença nesta chamada:");
+    }
+
+    private void enviarCodigo(String destinatario, String assunto, String nomeDestinatario, String codigo,
+            String instrucao) {
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException("BREVO_API_KEY nao configurada.");
         }
@@ -40,8 +52,8 @@ public class EmailService {
         Map<String, Object> corpo = Map.of(
                 "sender", Map.of("name", "Absence Manager", "email", remetente),
                 "to", List.of(Map.of("email", destinatario)),
-                "subject", "Seu código para trocar a senha",
-                "htmlContent", montarHtml(nomeUsuario, codigo)
+                "subject", assunto,
+                "htmlContent", montarHtml(nomeDestinatario, codigo, instrucao)
         );
 
         try {
@@ -57,7 +69,7 @@ public class EmailService {
         }
     }
 
-    private String montarHtml(String nomeUsuario, String codigo) {
+    private String montarHtml(String nomeUsuario, String codigo, String instrucao) {
         String primeiroNome = (nomeUsuario == null || nomeUsuario.isBlank())
                 ? "" : nomeUsuario.trim().split("\\s+")[0];
         String saudacao = primeiroNome.isBlank() ? "Olá," : "Olá, " + primeiroNome + ",";
@@ -79,7 +91,7 @@ public class EmailService {
                         <td style="padding:36px 32px 8px;">
                           <p style="margin:0 0 4px;color:#101828;font-size:16px;font-weight:700;">%s</p>
                           <p style="margin:0 0 24px;color:#475467;font-size:14px;line-height:1.6;">
-                            Recebemos um pedido para trocar a senha da sua conta. Use o código abaixo para autorizar essa troca:
+                            %s
                           </p>
                         </td>
                       </tr>
@@ -96,7 +108,7 @@ public class EmailService {
                             Esse código vale por <strong>10 minutos</strong>. Não compartilhe esse código com ninguém.
                           </p>
                           <p style="margin:0;color:#98a2b3;font-size:12px;line-height:1.6;">
-                            Se você não pediu essa troca de senha, pode ignorar este e-mail com segurança.
+                            Se você não reconhece esta solicitação, pode ignorar este e-mail com segurança.
                           </p>
                         </td>
                       </tr>
@@ -111,6 +123,6 @@ public class EmailService {
               </table>
             </body>
             </html>
-            """.formatted(saudacao, codigo);
+            """.formatted(saudacao, instrucao, codigo);
     }
 }

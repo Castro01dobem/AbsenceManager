@@ -3,7 +3,7 @@ package com.itb.inf2dm.absencemanager.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class ConfirmarPresencaRequestDTO {
+public class SolicitarCodigoPresencaRequestDTO {
 
     @NotBlank
     private String token;
@@ -11,9 +11,6 @@ public class ConfirmarPresencaRequestDTO {
     @NotBlank
     @Email
     private String email;
-
-    @NotBlank
-    private String codigo;
 
     public String getToken() {
         return token;
@@ -29,13 +26,5 @@ public class ConfirmarPresencaRequestDTO {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 }
