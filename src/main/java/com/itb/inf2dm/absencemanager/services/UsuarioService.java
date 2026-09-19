@@ -101,10 +101,18 @@ public class UsuarioService implements UserDetailsService {
     }
 
     /* ================= ALTERAR SENHA ================= */
-    public Usuario alterarSenha(Long id, String novaSenha) {
+    public Usuario alterarSenha(Long id, String senhaAtual, String novaSenha) {
         Usuario _usuario = usuarioRepository.findById(id)
                 .orElseThrow(()
                         -> new RuntimeException("Usuário não encontrado"));
+
+        if (!passwordEncoder.matches(senhaAtual == null ? "" : senhaAtual, _usuario.getPassword())) {
+            throw new IllegalArgumentException("Senha atual incorreta.");
+        }
+
+        if (novaSenha == null || novaSenha.length() < 6) {
+            throw new IllegalArgumentException("A nova senha deve ter ao menos 6 caracteres.");
+        }
 
         _usuario.setPassword(passwordEncoder.encode(novaSenha));
         _usuario.setStatusUsuario("ATIVO");
