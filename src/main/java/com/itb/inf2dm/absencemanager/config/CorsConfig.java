@@ -27,6 +27,11 @@ public class CorsConfig {
                 "http://localhost:5174",
                 "http://127.0.0.1:5173",
                 "http://127.0.0.1:5174",
+                // Expo web (Projeto-M-bili rodando no navegador via "npx expo start --web")
+                "http://localhost:8081",
+                "http://127.0.0.1:8081",
+                "http://localhost:19006",
+                "http://127.0.0.1:19006",
                 "https://absencemanager-2xqj6fs7j-rodriguesdobems-projects.vercel.app",
                 "https://absencemanager-jqw6hhqqb-rodriguesdobems-projects.vercel.app",
                 "https://absencemanager-*.vercel.app",
